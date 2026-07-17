@@ -1,74 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vynzo-Tube</title>
-<style>
-body{
-margin:0;
-font-family:Arial,sans-serif;
-background:#0f0f0f;
-color:white;
-}
-header{
-background:#202020;
-padding:15px;
-text-align:center;
-font-size:24px;
-font-weight:bold;
-}
-.container{
-padding:20px;
-max-width:900px;
-margin:auto;
-}
-video{
-width:100%;
-border-radius:10px;
-background:black;
-}
-input,textarea{
-width:100%;
-padding:10px;
-margin-top:10px;
-background:#1f1f1f;
-color:white;
-border:1px solid #333;
-border-radius:8px;
-}
-button{
-margin-top:10px;
-padding:12px;
-width:100%;
-background:red;
-color:white;
-border:none;
-border-radius:8px;
-font-size:16px;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vynzo-Tube</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #ff0000;
+            margin-bottom: 30px;
+        }
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #333;
+            background-color: #2c2c2c;
+            color: #fff;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #cc0000;
+        }
+        .video-section {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+        video, iframe {
+            width: 100%;
+            border-radius: 10px;
+            aspect-ratio: 16/9;
+            background-color: #000;
+        }
+        .video-info {
+            margin-top: 10px;
+            background-color: #1e1e1e;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
 
-<header>🎥 Vynzo-Tube</header>
+    <h1>🎥 Vynzo-Tube</h1>
 
-<div class="container">
-<h2>Upload Video</h2>
+    <div class="container">
+        <h2>Share a Video</h2>
+        <div class="form-group">
+            <label for="videoUrl">Video Link (YouTube, Direct MP4, etc.):</label>
+            <input type="text" id="videoUrl" placeholder="Paste video URL here...">
+        </div>
+        <div class="form-group">
+            <label for="videoTitle">Video Title:</label>
+            <input type="text" id="videoTitle" placeholder="Enter title...">
+        </div>
+        <div class="form-group">
+            <label for="videoDesc">Description:</label>
+            <input type="text" id="videoDesc" placeholder="Enter description...">
+        </div>
+        <button onclick="playVideo()">Show Video</button>
+    </div>
 
-<input type="file" accept="video/*">
-<input type="text" placeholder="Video Title">
-<textarea placeholder="Video Caption"></textarea>
+    <div class="video-section" id="playerSection" style="display: none;">
+        <h2>Latest Video</h2>
+        <div id="mediaContainer"></div>
+        <div class="video-info">
+            <h3 id="displayTitle"></h3>
+            <p id="displayDesc"></p>
+        </div>
+    </div>
 
-<button>Upload</button>
+    <script>
+        function playVideo() {
+            const url = document.getElementById('videoUrl').value.trim();
+            const title = document.getElementById('videoTitle').value.trim();
+            const desc = document.getElementById('videoDesc').value.trim();
+            const container = document.getElementById('mediaContainer');
 
-<h2 style="margin-top:30px;">Latest Video</h2>
+            if (!url) {
+                alert('Please paste a video link first!');
+                return;
+            }
 
-<video controls>
-<source src="" type="video/mp4">
-</video>
+            container.innerHTML = ''; // Clear old player
 
-</div>
+            // Check if it's a YouTube Link
+            if (url.includes('youtube.com') || url.includes('youtu.be')) {
+                let videoId = '';
+                if (url.includes('youtu.be/')) {
+                    videoId = url.split('youtu.be/')[1].split(/[?#]/)[0];
+                } else if (url.includes('v=')) {
+                    videoId = url.split('v=')[1].split('&')[0];
+                } else if (url.includes('embed/')) {
+                    videoId = url.split('embed/')[1].split(/[?#]/)[0];
+                }
+                
+                if (videoId) {
+                    container.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
+                } else {
+                    alert('Invalid YouTube Link!');
+                    return;
+                }
+            } else {
+                // Default HTML5 Video Player (for MP4 links)
+                container.innerHTML = `<video controls autoplay><source src="${url}" type="video/mp4">Your browser does not support the video tag.</video>`;
+            }
+
+            document.getElementById('displayTitle').innerText = title || 'Untitled Video';
+            document.getElementById('displayDesc').innerText = desc || 'No description provided.';
+            document.getElementById('playerSection').style.display = 'block';
+        }
+    </script>
 
 </body>
   </html>
+  
