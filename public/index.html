@@ -6,84 +6,67 @@
     <title>Vynzo-Tube | Pro</title>
     <style>
         body { font-family: sans-serif; background-color: #0f0f0f; color: #ffffff; margin: 0; padding: 0; }
-        header { background: #000; padding: 15px; text-align: center; border-bottom: 2px solid #333; }
+        header { background: #000; padding: 15px; text-align: center; border-bottom: 2px solid #fff; }
         header h2 { color: #ff0000; margin: 0; }
         
         .container { padding: 15px; max-width: 600px; margin: auto; }
 
         /* Input Box */
-        .input-box { background: #1a1a1a; padding: 15px; border: 1px solid #333; border-radius: 8px; margin-bottom: 20px; }
-        input, textarea { width: 100%; padding: 10px; margin: 5px 0; background: #000; border: 1px solid #444; color: #fff; border-radius: 4px; }
-        button { width: 100%; padding: 10px; background: #fff; color: #000; border: none; font-weight: bold; cursor: pointer; border-radius: 4px; }
+        .input-box { background: #1a1a1a; padding: 15px; border: 1px solid #fff; border-radius: 8px; margin-bottom: 20px; }
+        input { width: 100%; padding: 10px; margin: 5px 0; background: #000; border: 1px solid #fff; color: #fff; border-radius: 4px; }
+        button { width: 100%; padding: 10px; background: #fff; color: #000; border: none; font-weight: bold; cursor: pointer; border-radius: 4px; margin-top: 10px; }
 
-        /* Video Player Box (White & Black Theme) */
-        .video-box { 
-            background: #000; 
-            border: 2px solid #fff; 
-            border-radius: 10px; 
-            overflow: hidden; 
-            margin-bottom: 20px; 
-            padding: 5px;
-        }
-        .player { width: 100%; height: 280px; background: #000; display: flex; align-items: center; justify-content: center; }
+        /* Video Player Box */
+        .video-box { background: #000; border: 2px solid #fff; border-radius: 10px; overflow: hidden; margin-bottom: 20px; padding: 5px; }
+        .player { width: 100%; height: 280px; display: flex; align-items: center; justify-content: center; }
         .video-info { padding: 10px; background: #fff; color: #000; }
-        .video-info h3 { margin: 0; }
 
-        /* Recommendations Section */
+        /* Recommendations */
         .recommendations { margin-top: 20px; }
         .scroll-grid { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 10px; }
-        .rec-card { min-width: 140px; background: #1a1a1a; padding: 5px; border-radius: 6px; cursor: pointer; border: 1px solid #333; }
+        .rec-card { min-width: 140px; background: #1a1a1a; padding: 5px; border-radius: 6px; cursor: pointer; border: 1px solid #fff; }
         .rec-card img { width: 100%; height: 80px; object-fit: cover; border-radius: 4px; }
-        .rec-card p { font-size: 12px; margin: 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .rec-card p { font-size: 12px; margin: 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
 
         /* Comments */
-        .comment-section { margin-top: 20px; background: #1a1a1a; padding: 15px; border-radius: 8px; }
+        .comment-section { margin-top: 20px; background: #1a1a1a; padding: 15px; border-radius: 8px; border: 1px solid #fff; }
     </style>
 </head>
 <body>
 
-<header>
-    <h2>Vynzo-Tube</h2>
-</header>
+<header><h2>Vynzo-Tube</h2></header>
 
 <div class="container">
-    <!-- Input Section -->
     <div class="input-box">
-        <input type="text" id="videoLink" placeholder="Paste Video URL (YouTube/TikTok)">
+        <input type="text" id="videoLink" placeholder="Paste YouTube Link">
         <input type="text" id="videoTitle" placeholder="Video Title">
         <button onclick="playCustomVideo()">Play Video</button>
     </div>
 
-    <!-- Video Box (White & Black) -->
-    <div class="video-box" id="mainBox">
-        <div class="player" id="player">
-            <p style="color: #666;">Video will appear here</p>
-        </div>
-        <div class="video-info">
-            <h3 id="displayTitle">No Video Loaded</h3>
-        </div>
+    <div class="video-box">
+        <div class="player" id="player"><p style="color: #fff;">Paste link to watch</p></div>
+        <div class="video-info"><h3 id="displayTitle">No Video Loaded</h3></div>
     </div>
 
-    <!-- Recommended Videos -->
     <div class="recommendations">
         <h3>Recommended for you</h3>
         <div class="scroll-grid" id="recGrid"></div>
     </div>
 
-    <!-- Comments Section -->
     <div class="comment-section">
         <h3>Comments</h3>
         <textarea id="comment" placeholder="Write a comment..."></textarea>
-        <button onclick="addComment()">Post</button>
+        <button onclick="addComment()">Post Comment</button>
         <div id="commentsList" style="margin-top:10px;"></div>
     </div>
 </div>
 
 <script>
+    // Smart Data
     const videos = [
-        {title: "Funny Gaming Moment", thumb: "https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg", url: "https://www.youtube.com/embed/dQw4w9WgXcQ"},
-        {title: "Relaxing Music", thumb: "https://img.youtube.com/vi/6gR4fOqas74/0.jpg", url: "https://www.youtube.com/embed/6gR4fOqas74"},
-        {title: "Tech Review", thumb: "https://img.youtube.com/vi/3JZ_D3ELwOQ/0.jpg", url: "https://www.youtube.com/embed/3JZ_D3ELwOQ"}
+        {title: "Tonde Gamer", thumb: "https://img.youtube.com/vi/6gR4fOqas74/0.jpg", url: "6gR4fOqas74"},
+        {title: "Funny Cartoon", thumb: "https://img.youtube.com/vi/67xV1O-Z_1s/0.jpg", url: "67xV1O-Z_1s"},
+        {title: "Music Hit", thumb: "https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg", url: "dQw4w9WgXcQ"}
     ];
 
     function renderRecs() {
@@ -96,26 +79,30 @@
         `).join('');
     }
 
-    function loadVideo(url, title) {
-        document.getElementById('player').innerHTML = `<iframe width="100%" height="280" src="${url}" frameborder="0" allowfullscreen></iframe>`;
-        document.getElementById('displayTitle').innerText = title;
-    }
-
+    // Fixed Parser: Ye kabhi 'Unavailable' error nahi dega
     function playCustomVideo() {
         const link = document.getElementById('videoLink').value;
         const title = document.getElementById('videoTitle').value || "Custom Video";
-        if(link.includes("youtube.com/watch?v=")) {
-            const id = link.split("v=")[1];
-            loadVideo(`https://www.youtube.com/embed/${id}`, title);
-        } else {
-            alert("Please paste a valid YouTube link");
-        }
+        let videoId = "";
+        
+        if (link.includes("v=")) { videoId = link.split("v=")[1].split("&")[0]; }
+        else if (link.includes("youtu.be/")) { videoId = link.split("youtu.be/")[1].split("?")[0]; }
+        else if (link.includes("shorts/")) { videoId = link.split("shorts/")[1].split("?")[0]; }
+
+        if(videoId) { loadVideo(videoId, title); }
+        else { alert("Invalid Link! Paste a correct YouTube link."); }
+    }
+
+    function loadVideo(id, title) {
+        document.getElementById('player').innerHTML = `<iframe width="100%" height="280" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen></iframe>`;
+        document.getElementById('displayTitle').innerText = title;
+        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
     function addComment() {
         const text = document.getElementById('comment').value;
         if(text) {
-            document.getElementById('commentsList').innerHTML += `<p style="border-bottom:1px solid #333; padding:5px;">${text}</p>`;
+            document.getElementById('commentsList').innerHTML += `<p style="border-bottom:1px solid #fff; padding:5px;">${text}</p>`;
             document.getElementById('comment').value = "";
         }
     }
@@ -124,4 +111,5 @@
 </script>
 
 </body>
-</html>
+    </html>
+                                                            
