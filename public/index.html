@@ -4,159 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vynzo-Tube</title>
-    <!-- Aapka Logo -->
     <link rel="icon" type="image/png" href="/1784284331252.png">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        h1 {
-            color: #ff0000;
-            margin-bottom: 30px;
-        }
-        .container {
-            width: 100%;
-            max-width: 500px;
-            background-color: #1e1e1e;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            box-sizing: border-box;
-        }
-        label {
-            font-weight: bold;
-            font-size: 14px;
-        }
-        input, textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0 20px 0;
-            border: none;
-            border-radius: 5px;
-            background-color: #2a2a2a;
-            color: white;
-            box-sizing: border-box;
-        }
-        button {
-            width: 100%;
-            padding: 15px;
-            background-color: #ff0000;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #cc0000;
-        }
-        #videoDisplay {
-            width: 100%;
-            max-width: 500px;
-            display: none;
-            flex-direction: column;
-            background-color: #1e1e1e;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 50px;
-        }
-        .video-wrapper {
-            position: relative;
-            height: 0;
-            overflow: hidden;
-        }
-        .video-wrapper iframe, .video-wrapper video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        .video-info {
-            padding: 20px;
-        }
-        .video-info h3 {
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-        /* Like and Comment Styling */
-        .interaction-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 20px;
-            border-top: 1px solid #2a2a2a;
-            border-bottom: 1px solid #2a2a2a;
-            background-color: #1a1a1a;
-        }
-        .like-btn {
-            background: none;
-            border: none;
-            color: #ff0000;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            width: auto;
-            padding: 5px 10px;
-        }
-        .like-btn:hover {
-            background-color: #2a2a2a;
-        }
-        .comments-section {
-            padding: 20px;
-            background-color: #1e1e1e;
-        }
-        .comments-section h4 {
-            margin-top: 0;
-            border-bottom: 1px solid #2a2a2a;
-            padding-bottom: 10px;
-        }
-        .comment-input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .comment-input-group input, .comment-input-group textarea {
-            margin: 0;
-        }
-        .post-comment-btn {
-            padding: 10px;
-            font-size: 14px;
-        }
-        .comments-list {
-            max-height: 250px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .comment-item {
-            background-color: #2a2a2a;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        .comment-user {
-            font-weight: bold;
-            color: #ff0000;
-            font-size: 13px;
-            margin-bottom: 5px;
-        }
-        .comment-text {
-            font-size: 14px;
-            word-break: break-all;
-        }
+        body { font-family: Arial, sans-serif; background-color: #121212; color: #ffffff; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        h1 { color: #ff0000; margin-bottom: 20px; }
+        .container { width: 100%; max-width: 500px; background-color: #1e1e1e; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-sizing: border-box; }
+        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: none; border-radius: 5px; background-color: #2a2a2a; color: white; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background-color: #ff0000; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        #videoDisplay { width: 100%; max-width: 500px; display: none; background-color: #1e1e1e; border-radius: 10px; overflow: hidden; margin-bottom: 50px; }
+        .video-wrapper { position: relative; width: 100%; background-color: #000; }
+        .video-wrapper iframe, .video-wrapper video { width: 100%; display: block; }
+        .controls { padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
+        .like-btn { background: #fff; color: #000; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .like-btn.liked { background: #ff0000; color: #fff; }
+        .download-btn { background: #333; color: #fff; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
+        .comments-section { padding: 15px; }
+        .comment-item { background: #2a2a2a; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
     </style>
 </head>
 <body>
@@ -164,171 +27,113 @@
     <h1>🎥 Vynzo-Tube</h1>
 
     <div class="container">
-        <h2>Share a Video</h2>
-        <label>Video Link (YouTube, TikTok, Direct MP4, etc.):</label>
-        <input type="text" id="videoLink" placeholder="Paste video URL here...">
-        
-        <label>Video Title:</label>
-        <input type="text" id="videoTitle" placeholder="Enter title...">
-        
-        <label>Description:</label>
-        <textarea id="videoDesc" placeholder="Enter description..." rows="3"></textarea>
-        
+        <input type="text" id="videoLink" placeholder="Paste Video URL (YouTube, TikTok, MP4)...">
+        <input type="text" id="videoTitle" placeholder="Video Title...">
+        <textarea id="videoDesc" placeholder="Description..." rows="2"></textarea>
         <button onclick="displayVideo()">Show Video</button>
     </div>
 
-    <h2 id="latestHeading" style="display: none;">Latest Video</h2>
-
     <div id="videoDisplay">
         <div id="playerContainer" class="video-wrapper"></div>
-        <div class="video-info">
-            <h3 id="displayTitle"></h3>
-            <p id="displayDesc"></p>
+        <div class="controls">
+            <button class="like-btn" id="likeButton" onclick="toggleLike()">👍🏻 <span id="likeCount">0</span></button>
+            <button class="download-btn" onclick="downloadVideo()">Download</button>
         </div>
-
-        <!-- Like Bar -->
-        <div class="interaction-bar">
-            <button class="like-btn" onclick="likeVideo()">
-                ❤️ <span id="likeCount">0</span> Likes
-            </button>
-        </div>
-
-        <!-- Comments Section -->
         <div class="comments-section">
             <h4>Comments</h4>
-            <div class="comment-input-group">
-                <input type="text" id="commenterName" placeholder="Your Name...">
-                <textarea id="commentText" placeholder="Add a public comment..." rows="2"></textarea>
-                <button class="post-comment-btn" onclick="postComment()">Post Comment</button>
-            </div>
-            <div class="comments-list" id="commentsList">
-                <!-- Comments yahan show honge -->
-            </div>
+            <input type="text" id="commenterName" placeholder="Name...">
+            <textarea id="commentText" placeholder="Comment..."></textarea>
+            <button onclick="postComment()">Post</button>
+            <div id="commentsList" style="margin-top:15px;"></div>
         </div>
     </div>
 
     <script>
-        let currentVideoKey = "";
+        let currentVideoLink = "";
+        let currentKey = "";
 
         function displayVideo() {
             const link = document.getElementById('videoLink').value.trim();
-            const title = document.getElementById('videoTitle').value || "Untitled Video";
-            const desc = document.getElementById('videoDesc').value || "";
+            if (!link) return alert("Enter link!");
             
-            if (!link) {
-                alert("Please enter a video link!");
-                return;
-            }
-
-            // Video link ko storage key banayenge taake har video ke apne likes/comments hon
-            currentVideoKey = btoa(link).replace(/=/g, ""); 
-
-            const playerContainer = document.getElementById('playerContainer');
-            let embedHtml = "";
-
-            // YouTube ke liye
+            currentVideoLink = link;
+            currentKey = btoa(link).replace(/=/g, "");
+            const container = document.getElementById('playerContainer');
+            
+            let html = "";
             if (link.includes("youtube.com") || link.includes("youtu.be")) {
-                let videoId = "";
-                if (link.includes("v=")) {
-                    videoId = link.split("v=")[1].split("&")[0];
-                } else if (link.includes("youtu.be/")) {
-                    videoId = link.split("youtu.be/")[1].split("?")[0];
-                }
-                embedHtml = `<iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
-                playerContainer.style.paddingBottom = "56.25%"; 
-            } 
-            // TikTok ke liye
-            else if (link.includes("tiktok.com")) {
-                let match = link.match(/\/video\/(\d+)/);
-                if (match && match[1]) {
-                    let videoId = match[1];
-                    embedHtml = `<iframe src="https://www.tiktok.com/embed/v2/${videoId}" frameborder="0" allow="fullscreen"></iframe>`;
-                    playerContainer.style.paddingBottom = "177%"; 
-                } else {
-                    alert("Invalid TikTok link. Make sure it's a full video link.");
-                    return;
-                }
-            }
-            // Direct MP4
-            else {
-                embedHtml = `<video controls><source src="${link}" type="video/mp4">Your browser does not support the video tag.</video>`;
-                playerContainer.style.paddingBottom = "56.25%"; 
+                let id = link.includes("v=")? link.split("v=")[1].split("&")[0] : link.split("youtu.be/")[1];
+                html = `<iframe height="280" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen></iframe>`;
+            } else if (link.includes("tiktok.com")) {
+                let id = link.match(/\/video\/(\d+)/)[1];
+                html = `<iframe height="500" src="https://www.tiktok.com/embed/v2/${id}" frameborder="0"></iframe>`;
+            } else {
+                html = `<video id="myVideo" height="280" controls playsinline><source src="${link}" type="video/mp4"></video>`;
             }
 
-            playerContainer.innerHTML = embedHtml;
-            document.getElementById('displayTitle').innerText = title;
-            document.getElementById('displayDesc').innerText = desc;
+            container.innerHTML = html;
+            document.getElementById('videoDisplay').style.display = 'block';
             
-            document.getElementById('latestHeading').style.display = 'block';
-            document.getElementById('videoDisplay').style.display = 'flex';
-
-            // Likes aur Comments load karein is video ke liye
-            loadInteractions();
+            // Double Tap Logic for MP4 only
+            if (!html.includes("iframe")) {
+                const vid = document.getElementById('myVideo');
+                let lastTap = 0;
+                vid.addEventListener('touchend', (e) => {
+                    const currentTime = new Date().getTime();
+                    const tapLength = currentTime - lastTap;
+                    if (tapLength < 300 && tapLength > 0) {
+                        const rect = vid.getBoundingClientRect();
+                        const x = e.changedTouches[0].clientX - rect.left;
+                        if (x < rect.width / 2) vid.currentTime -= 10; // Left: -10s
+                        else vid.currentTime += 10; // Right: +10s
+                    }
+                    lastTap = currentTime;
+                });
+            }
+            loadData();
         }
 
-        // Likes aur Comments Load karne ka function
-        function loadInteractions() {
-            // Load Likes
-            const likes = localStorage.getItem(`likes_${currentVideoKey}`) || 0;
-            document.getElementById('likeCount').innerText = likes;
-
-            // Load Comments
-            const commentsList = document.getElementById('commentsList');
-            commentsList.innerHTML = "";
-            const comments = JSON.parse(localStorage.getItem(`comments_${currentVideoKey}`)) || [];
+        function toggleLike() {
+            let likes = parseInt(localStorage.getItem(`likes_${currentKey}`)) || 0;
+            let liked = localStorage.getItem(`liked_${currentKey}`) === "true";
             
-            comments.forEach(c => {
-                const item = document.createElement('div');
-                item.className = 'comment-item';
-                item.innerHTML = `<div class="comment-user">${escapeHtml(c.name)}</div><div class="comment-text">${escapeHtml(c.text)}</div>`;
-                commentsList.appendChild(item);
-            });
+            if (!liked) { likes++; localStorage.setItem(`liked_${currentKey}`, "true"); }
+            else { likes = Math.max(0, likes - 1); localStorage.setItem(`liked_${currentKey}`, "false"); }
+            
+            localStorage.setItem(`likes_${currentKey}`, likes);
+            updateUI();
         }
 
-        // Like karne ka function
-        function likeVideo() {
-            if (!currentVideoKey) return;
-            let likes = parseInt(localStorage.getItem(`likes_${currentVideoKey}`)) || 0;
-            likes++;
-            localStorage.setItem(`likes_${currentVideoKey}`, likes);
-            document.getElementById('likeCount').innerText = likes;
+        function downloadVideo() {
+            const a = document.createElement('a');
+            a.href = currentVideoLink;
+            a.download = 'vynzo-video.mp4';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
 
-        // Comment post karne ka function
         function postComment() {
-            if (!currentVideoKey) return;
-            const nameInput = document.getElementById('commenterName');
-            const textInput = document.getElementById('commentText');
-            
-            const name = nameInput.value.trim() || "Anonymous";
-            const text = textInput.value.trim();
-
-            if (!text) {
-                alert("Please write a comment first!");
-                return;
-            }
-
-            const comments = JSON.parse(localStorage.getItem(`comments_${currentVideoKey}`)) || [];
-            comments.unshift({ name: name, text: text }); // Naya comment list ke start mein add hoga
-            
-            localStorage.setItem(`comments_${currentVideoKey}`, JSON.stringify(comments));
-            
-            // Inputs clear karein aur reload karein
-            nameInput.value = "";
-            textInput.value = "";
-            loadInteractions();
+            const name = document.getElementById('commenterName').value || "User";
+            const text = document.getElementById('commentText').value;
+            if(!text) return;
+            const comments = JSON.parse(localStorage.getItem(`comm_${currentKey}`)) || [];
+            comments.unshift({name, text});
+            localStorage.setItem(`comm_${currentKey}`, JSON.stringify(comments));
+            updateUI();
         }
 
-        // Security ke liye HTML escape function
-        function escapeHtml(text) {
-            return text
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
+        function updateUI() {
+            document.getElementById('likeCount').innerText = localStorage.getItem(`likes_${currentKey}`) || 0;
+            const liked = localStorage.getItem(`liked_${currentKey}`) === "true";
+            document.getElementById('likeButton').className = liked ? "like-btn liked" : "like-btn";
+            
+            const list = document.getElementById('commentsList');
+            list.innerHTML = (JSON.parse(localStorage.getItem(`comm_${currentKey}`)) || []).map(c => 
+                `<div class="comment-item"><b>${c.name}</b>: ${c.text}</div>`).join('');
         }
+        
+        function loadData() { updateUI(); }
     </script>
 </body>
-    </html>
-    
+</html>
