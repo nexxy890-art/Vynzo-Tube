@@ -112,4 +112,22 @@
 
 </body>
     </html>
-                                                            
+                         <script>
+    function playCustomVideo() {
+        let link = document.getElementById('videoLink').value.trim();
+        const title = document.getElementById('videoTitle').value || "Custom Video";
+        
+        // Glitch Fix: Agar koi galti se Markdown format daal de, toh ye use saaf kar dega
+        link = link.replace(/\[|\]|\(|\)/g, "").split(" ")[0]; 
+
+        let videoId = "";
+        if (link.includes("v=")) { videoId = link.split("v=")[1].split("&")[0]; }
+        else if (link.includes("youtu.be/")) { videoId = link.split("youtu.be/")[1].split("?")[0]; }
+        else if (link.includes("shorts/")) { videoId = link.split("shorts/")[1].split("?")[0]; }
+
+        if(videoId) { loadVideo(videoId, title); }
+        else { alert("Link sahi nahi hai. Sirf URL paste karein."); }
+    }
+    // Baaki sab code waisa hi rahega...
+                         </script>
+
