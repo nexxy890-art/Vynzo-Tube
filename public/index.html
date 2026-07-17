@@ -4,620 +4,124 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vynzo-Tube | Pro</title>
-    <link rel="icon" type="image/png" href="/1784284331252.png">
     <style>
-        * { box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', Arial, sans-serif; 
-            background-color: #0f0f0f; 
-            color: #ffffff; 
-            margin: 0; 
-            padding: 0; 
-        }
+        body { font-family: sans-serif; background-color: #0f0f0f; color: #ffffff; margin: 0; padding: 0; }
+        header { background: #000; padding: 15px; text-align: center; border-bottom: 2px solid #333; }
+        header h2 { color: #ff0000; margin: 0; }
         
-        /* Navigation Bar */
-        header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 15px 20px; 
-            background: #1a1a1a; 
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid #2a2a2a;
-        }
-        header h2 { 
-            color: #ff0000; 
-            margin: 0; 
-            font-size: 22px;
-            font-weight: bold;
-        }
-        .profile-btn-container {
-            cursor: pointer;
-        }
-        #profileIcon { 
-            width: 40px; 
-            height: 40px; 
-            border-radius: 50%; 
-            border: 2px solid #ff0000; 
-            object-fit: cover; 
-            display: block;
-        }
+        .container { padding: 15px; max-width: 600px; margin: auto; }
 
-        /* Main Container */
-        .main-container { 
-            padding: 15px; 
-            max-width: 600px; 
-            margin: auto; 
-        }
+        /* Input Box */
+        .input-box { background: #1a1a1a; padding: 15px; border: 1px solid #333; border-radius: 8px; margin-bottom: 20px; }
+        input, textarea { width: 100%; padding: 10px; margin: 5px 0; background: #000; border: 1px solid #444; color: #fff; border-radius: 4px; }
+        button { width: 100%; padding: 10px; background: #fff; color: #000; border: none; font-weight: bold; cursor: pointer; border-radius: 4px; }
 
-        /* Link Input Form Section */
-        .input-card {
-            background-color: #1e1e1e;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            border: 1px solid #2a2a2a;
-        }
-        .input-card h3 {
-            margin-top: 0;
-            margin-bottom: 15px;
-            font-size: 16px;
-            color: #ff0000;
-        }
-        .input-card input, .input-card textarea {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 12px;
-            border: none;
-            border-radius: 6px;
-            background-color: #2a2a2a;
-            color: white;
-            font-size: 14px;
-        }
-        .input-card button {
-            width: 100%;
-            padding: 12px;
-            background-color: #ff0000;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 15px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .input-card button:hover {
-            background-color: #cc0000;
-        }
-
-        /* Video Player Section */
+        /* Video Player Box (White & Black Theme) */
         .video-box { 
-            width: 100%; 
-            background: #1e1e1e; 
-            border-radius: 12px; 
+            background: #000; 
+            border: 2px solid #fff; 
+            border-radius: 10px; 
             overflow: hidden; 
             margin-bottom: 20px; 
-            border: 1px solid #2a2a2a;
+            padding: 5px;
         }
-        .player-wrapper { 
-            position: relative; 
-            width: 100%; 
-            background: #000; 
-            min-height: 280px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .player-wrapper iframe, .player-wrapper video { 
-            width: 100%; 
-            display: block; 
-        }
-        .video-details {
-            padding: 15px;
-        }
-        .video-details h4 {
-            margin: 0 0 8px 0;
-            font-size: 16px;
-        }
-        .video-details p {
-            margin: 0;
-            font-size: 13px;
-            color: #aaa;
-        }
+        .player { width: 100%; height: 280px; background: #000; display: flex; align-items: center; justify-content: center; }
+        .video-info { padding: 10px; background: #fff; color: #000; }
+        .video-info h3 { margin: 0; }
 
-        /* Interaction Bar (Like & Download) */
-        .interaction-bar {
-            display: flex;
-            gap: 10px;
-            padding: 0 15px 15px 15px;
-            background: #1e1e1e;
-        }
-        .action-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-size: 14px;
-        }
-        .like-btn {
-            background-color: #ffffff;
-            color: #000000;
-        }
-        .like-btn.liked {
-            background-color: #ff0000;
-            color: #ffffff;
-        }
-        .download-btn {
-            background-color: #2a2a2a;
-            color: #ffffff;
-        }
+        /* Recommendations Section */
+        .recommendations { margin-top: 20px; }
+        .scroll-grid { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 10px; }
+        .rec-card { min-width: 140px; background: #1a1a1a; padding: 5px; border-radius: 6px; cursor: pointer; border: 1px solid #333; }
+        .rec-card img { width: 100%; height: 80px; object-fit: cover; border-radius: 4px; }
+        .rec-card p { font-size: 12px; margin: 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* Comment Box Section */
-        .comment-box { 
-            padding: 20px; 
-            background: #1e1e1e; 
-            border-radius: 12px; 
-            margin-bottom: 20px;
-            border: 1px solid #2a2a2a;
-        }
-        .comment-box h3 {
-            margin-top: 0;
-            margin-bottom: 15px;
-            font-size: 16px;
-        }
-        .comment-input-area {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .comment-input-area textarea {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            background-color: #2a2a2a;
-            color: white;
-            resize: none;
-            font-size: 14px;
-        }
-        .comment-input-area button {
-            align-self: flex-end;
-            padding: 10px 20px;
-            background-color: #ff0000;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .comment-item { 
-            display: flex; 
-            align-items: flex-start; 
-            gap: 12px; 
-            margin-bottom: 15px; 
-            padding-bottom: 12px;
-            border-bottom: 1px solid #2a2a2a;
-        }
-        .comment-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-        .avatar-small { 
-            width: 35px; 
-            height: 35px; 
-            border-radius: 50%; 
-            object-fit: cover;
-            background-color: #444;
-        }
-        .comment-content {
-            flex: 1;
-        }
-        .comment-user-name {
-            font-weight: bold;
-            font-size: 13px;
-            color: #ff0000;
-            margin-bottom: 4px;
-        }
-        .comment-text {
-            font-size: 14px;
-            color: #ddd;
-            word-break: break-all;
-        }
-
-        /* Recommendations Section (Horizontal Scroll) */
-        .recommendations { 
-            padding: 10px 0; 
-        }
-        .recommendations h3 {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: #fff;
-        }
-        .scroll-grid { 
-            display: flex; 
-            overflow-x: auto; 
-            gap: 15px; 
-            padding-bottom: 15px; 
-        }
-        .rec-card { 
-            min-width: 160px; 
-            max-width: 160px;
-            cursor: pointer; 
-            background: #1e1e1e;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid #2a2a2a;
-        }
-        .rec-card img { 
-            width: 100%; 
-            height: 90px;
-            object-fit: cover;
-            display: block;
-        }
-        .rec-card-info {
-            padding: 8px;
-        }
-        .rec-card-info p { 
-            font-size: 12px; 
-            margin: 0; 
-            color: #fff; 
-            font-weight: bold;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .rec-card-info span {
-            font-size: 11px;
-            color: #aaa;
-        }
-
-        /* Fullscreen Profile Page Overlay (Fixed Layout) */
-        #profilePage {
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #0f0f0f; 
-            z-index: 200;
-            padding: 20px;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .profile-header {
-            width: 100%;
-            max-width: 500px;
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .back-nav-btn {
-            background: #2a2a2a;
-            border: none;
-            color: white;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            padding: 10px 15px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .profile-header h2 {
-            margin: 0;
-            margin-left: 15px;
-            font-size: 20px;
-        }
-        .profile-editor-card {
-            width: 100%;
-            max-width: 500px;
-            background: #1e1e1e;
-            padding: 25px;
-            border-radius: 12px;
-            border: 1px solid #2a2a2a;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        #profilePreview {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: #444;
-            border: 3px solid #ff0000;
-            object-fit: cover;
-            margin-bottom: 20px;
-        }
-        .upload-btn-wrapper {
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-            margin-bottom: 20px;
-        }
-        .btn-upload {
-            border: 1px solid #ff0000;
-            color: #ff0000;
-            background-color: transparent;
-            padding: 8px 20px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .upload-btn-wrapper input[type=file] {
-            font-size: 100px;
-            position: absolute;
-            left: 0;
-            top: 0;
-            opacity: 0;
-            cursor: pointer;
-        }
-        .profile-editor-card input[type=text] {
-            width: 100%;
-            padding: 12px;
-            background-color: #2a2a2a;
-            border: none;
-            border-radius: 6px;
-            color: white;
-            margin-bottom: 20px;
-            font-size: 15px;
-            text-align: center;
-        }
-        .save-profile-btn {
-            width: 100%;
-            padding: 14px;
-            background-color: #ff0000;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-        }
+        /* Comments */
+        .comment-section { margin-top: 20px; background: #1a1a1a; padding: 15px; border-radius: 8px; }
     </style>
 </head>
 <body>
 
-<!-- Global Header -->
 <header>
-    <h2>🎥 Vynzo-Tube</h2>
-    <div class="profile-btn-container" onclick="openProfilePage()">
-        <img id="profileIcon" src="" alt="Profile">
-    </div>
+    <h2>Vynzo-Tube</h2>
 </header>
 
-<div class="main-container">
-
-    <!-- 1. Input Section -->
-    <div class="input-card">
-        <h3>🔗 Custom Video Player</h3>
-        <input type="text" id="videoLink" placeholder="Paste YouTube, TikTok, or Direct MP4 link...">
-        <input type="text" id="videoTitle" placeholder="Video Title...">
-        <textarea id="videoDesc" placeholder="Video Description..." rows="2"></textarea>
-        <button onclick="displayVideoFromInput()">Show Video</button>
+<div class="container">
+    <!-- Input Section -->
+    <div class="input-box">
+        <input type="text" id="videoLink" placeholder="Paste Video URL (YouTube/TikTok)">
+        <input type="text" id="videoTitle" placeholder="Video Title">
+        <button onclick="playCustomVideo()">Play Video</button>
     </div>
 
-    <!-- 2. Video Player Section -->
-    <div id="videoDisplay" class="video-box">
-        <div id="playerContainer" class="player-wrapper">
-            <p id="placeholderText" style="color: #ccc; font-size: 14px; text-align: center; padding: 20px;">Paste a link or select a trending video below to start playing!</p>
+    <!-- Video Box (White & Black) -->
+    <div class="video-box" id="mainBox">
+        <div class="player" id="player">
+            <p style="color: #666;">Video will appear here</p>
         </div>
-        <div class="video-details">
-            <h4 id="displayTitle">No Video Loaded</h4>
-            <p id="displayDesc">Please select or paste a video link above.</p>
-        </div>
-        <!-- Like & Download System -->
-        <div class="interaction-bar">
-            <button class="action-btn like-btn" id="likeButton" onclick="toggleLike()">
-                👍🏻 <span id="likeCount">0</span> Likes
-            </button>
-            <button class="action-btn download-btn" onclick="downloadVideo()">
-                📥 Download
-            </button>
-        </div>
-    </div>
-    
-    <!-- 3. Comments Section -->
-    <div class="comment-box">
-        <h3>Comments</h3>
-        <div class="comment-input-area">
-            <textarea id="commentText" placeholder="Share your thoughts about this video..." rows="2"></textarea>
-            <button onclick="postComment()">Post Comment</button>
-        </div>
-        <div id="commentsList">
-            <!-- Comments -->
+        <div class="video-info">
+            <h3 id="displayTitle">No Video Loaded</h3>
         </div>
     </div>
 
-    <!-- 4. Trending Horizontal Scroll -->
+    <!-- Recommended Videos -->
     <div class="recommendations">
-        <h3>Trending Videos</h3>
+        <h3>Recommended for you</h3>
         <div class="scroll-grid" id="recGrid"></div>
     </div>
-</div>
 
-<!-- 5. Fullscreen Profile Edit Page (Back Button Included!) -->
-<div id="profilePage">
-    <div class="profile-header">
-        <button class="back-nav-btn" onclick="closeProfilePage()">← Back</button>
-        <h2>Manage Profile</h2>
-    </div>
-    <div class="profile-editor-card">
-        <img id="profilePreview" src="" alt="Preview">
-        
-        <div class="upload-btn-wrapper">
-            <button class="btn-upload">Change Photo</button>
-            <input type="file" id="newImg" accept="image/*" onchange="previewImage(this)">
-        </div>
-        
-        <input type="text" id="newName" placeholder="Enter your name...">
-        <button class="save-profile-btn" onclick="saveProfile()">Save Changes</button>
+    <!-- Comments Section -->
+    <div class="comment-section">
+        <h3>Comments</h3>
+        <textarea id="comment" placeholder="Write a comment..."></textarea>
+        <button onclick="addComment()">Post</button>
+        <div id="commentsList" style="margin-top:10px;"></div>
     </div>
 </div>
 
 <script>
-    // Bulletproof Offline Safe SVG Avatar - Never Fails or Crashes
-    const defaultAvatar = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ff0000"><circle cx="12" cy="8" r="4"/><path d="M12 14c-6.1 0-11 2.9-11 6v2h22v-2c0-3.1-4.9-6-11-6z"/></svg>';
-
     const videos = [
-        {
-            title: "Tonde Gamer - Live FF Gameplay", 
-            thumb: "https://img.youtube.com/vi/6gR4fOqas74/0.jpg", 
-            url: "https://www.youtube.com/watch?v=6gR4fOqas74",
-            desc: "Best Free Fire gameplay edit by Tonde Gamer. Check out these crazy headshots!",
-            category: "Gaming"
-        },
-        {
-            title: "T-Series - Latest Hit Song", 
-            thumb: "https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg", 
-            url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-            desc: "Official music track presented by T-Series.",
-            category: "Music"
-        },
-        {
-            title: "Funny Cartoon Show", 
-            thumb: "https://img.youtube.com/vi/67xV1O-Z_1s/0.jpg", 
-            url: "https://www.youtube.com/watch?v=67xV1O-Z_1s",
-            desc: "Super funny animated cartoon episode for children and family.",
-            category: "Cartoon"
-        }
+        {title: "Funny Gaming Moment", thumb: "https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg", url: "https://www.youtube.com/embed/dQw4w9WgXcQ"},
+        {title: "Relaxing Music", thumb: "https://img.youtube.com/vi/6gR4fOqas74/0.jpg", url: "https://www.youtube.com/embed/6gR4fOqas74"},
+        {title: "Tech Review", thumb: "https://img.youtube.com/vi/3JZ_D3ELwOQ/0.jpg", url: "https://www.youtube.com/embed/3JZ_D3ELwOQ"}
     ];
-
-    let currentVideoLink = "";
-    let currentKey = "";
 
     function renderRecs() {
         const grid = document.getElementById('recGrid');
         grid.innerHTML = videos.map(v => `
-            <div class="rec-card" onclick="loadVideo('${v.url}', '${v.title.replace(/'/g, "\\'")}', '${v.desc.replace(/'/g, "\\'")}')">
-                <img src="${v.thumb}" alt="thumbnail">
-                <div class="rec-card-info">
-                    <p>${v.title}</p>
-                    <span>${v.category}</span>
-                </div>
+            <div class="rec-card" onclick="loadVideo('${v.url}', '${v.title}')">
+                <img src="${v.thumb}">
+                <p>${v.title}</p>
             </div>
         `).join('');
     }
 
-    function displayVideoFromInput() {
-        const link = document.getElementById('videoLink').value.trim();
-        const title = document.getElementById('videoTitle').value.trim() || "Custom Video";
-        const desc = document.getElementById('videoDesc').value.trim() || "No description provided.";
-        
-        if (!link) return alert("Please paste a video link first!");
-        loadVideo(link, title, desc);
-    }
-
-    function loadVideo(url, title, desc) {
-        currentVideoLink = url;
-        // Super Safe Key replacement that never throws a JavaScript error
-        currentKey = url.replace(/[^a-zA-Z0-9]/g, "").slice(-50); 
-        
-        const container = document.getElementById('playerContainer');
-        let html = "";
-        
-        if (url.includes("youtube.com") || url.includes("youtu.be")) {
-            let id = "";
-            if (url.includes("v=")) {
-                id = url.split("v=")[1].split("&")[0];
-            } else if (url.includes("youtu.be/")) {
-                id = url.split("youtu.be/")[1].split("?")[0];
-            }
-            html = `<iframe height="280" src="https://www.youtube.com/embed/${id}?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-        } else if (url.includes("tiktok.com")) {
-            let match = url.match(/\/video\/(\d+)/);
-            if (match && match[1]) {
-                html = `<iframe height="500" src="https://www.tiktok.com/embed/v2/${match[1]}" frameborder="0" allow="fullscreen"></iframe>`;
-            } else {
-                alert("Invalid TikTok link format.");
-                return;
-            }
-        } else {
-            html = `<video id="myVideo" height="280" controls playsinline autoplay><source src="${url}" type="video/mp4">Your browser does not support the video tag.</video>`;
-        }
-
-        container.innerHTML = html;
+    function loadVideo(url, title) {
+        document.getElementById('player').innerHTML = `<iframe width="100%" height="280" src="${url}" frameborder="0" allowfullscreen></iframe>`;
         document.getElementById('displayTitle').innerText = title;
-        document.getElementById('displayDesc').innerText = desc;
-
-        if (!html.includes("iframe")) {
-            const vid = document.getElementById('myVideo');
-            let lastTap = 0;
-            vid.addEventListener('touchend', (e) => {
-                const currentTime = new Date().getTime();
-                const tapLength = currentTime - lastTap;
-                if (tapLength < 300 && tapLength > 0) {
-                    const rect = vid.getBoundingClientRect();
-                    const x = e.changedTouches[0].clientX - rect.left;
-                    if (x < rect.width / 2) {
-                        vid.currentTime = Math.max(0, vid.currentTime - 10); 
-                    } else {
-                        vid.currentTime = Math.min(vid.duration, vid.currentTime + 10); 
-                    }
-                }
-                lastTap = currentTime;
-            });
-        }
-
-        window.scrollTo({top: 0, behavior: 'smooth'});
-        loadInteractions();
     }
 
-    function openProfilePage() {
-        document.getElementById('newName').value = localStorage.getItem('uname') || '';
-        document.getElementById('profilePreview').src = localStorage.getItem('uimg') || defaultAvatar;
-        document.getElementById('profilePage').style.display = 'flex';
-    }
-
-    function closeProfilePage() {
-        document.getElementById('profilePage').style.display = 'none';
-    }
-
-    function previewImage(input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('profilePreview').src = e.target.result;
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-
-    function saveProfile() {
-        const name = document.getElementById('newName').value.trim() || 'User';
-        const previewSrc = document.getElementById('profilePreview').src;
-        
-        localStorage.setItem('uname', name);
-        localStorage.setItem('uimg', previewSrc);
-        
-        document.getElementById('profileIcon').src = previewSrc;
-        closeProfilePage();
-        renderComments(); 
-    }
-
-    function loadInteractions() {
-        if (!currentKey) return;
-        
-        const likes = parseInt(localStorage.getItem(`likes_${currentKey}`)) || 0;
-        document.getElementById('likeCount').innerText = likes;
-
-        const liked = localStorage.getItem(`liked_${currentKey}`) === "true";
-        const btn = document.getElementById('likeButton');
-        if (liked) {
-            btn.classList.add('liked');
+    function playCustomVideo() {
+        const link = document.getElementById('videoLink').value;
+        const title = document.getElementById('videoTitle').value || "Custom Video";
+        if(link.includes("youtube.com/watch?v=")) {
+            const id = link.split("v=")[1];
+            loadVideo(`https://www.youtube.com/embed/${id}`, title);
         } else {
-            btn.classList.remove('liked');
-      
+            alert("Please paste a valid YouTube link");
+        }
+    }
+
+    function addComment() {
+        const text = document.getElementById('comment').value;
+        if(text) {
+            document.getElementById('commentsList').innerHTML += `<p style="border-bottom:1px solid #333; padding:5px;">${text}</p>`;
+            document.getElementById('comment').value = "";
+        }
+    }
+
+    renderRecs();
+</script>
+
+</body>
+</html>
