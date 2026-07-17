@@ -3,137 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vynzo-Tube</title>
-    <link rel="icon" type="image/png" href="/1784284331252.png">
+    <title>Vynzo-Tube | Pro</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #121212; color: #ffffff; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        h1 { color: #ff0000; margin-bottom: 20px; }
-        .container { width: 100%; max-width: 500px; background-color: #1e1e1e; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-sizing: border-box; }
-        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: none; border-radius: 5px; background-color: #2a2a2a; color: white; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background-color: #ff0000; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
-        #videoDisplay { width: 100%; max-width: 500px; display: none; background-color: #1e1e1e; border-radius: 10px; overflow: hidden; margin-bottom: 50px; }
-        .video-wrapper { position: relative; width: 100%; background-color: #000; }
-        .video-wrapper iframe, .video-wrapper video { width: 100%; display: block; }
-        .controls { padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
-        .like-btn { background: #fff; color: #000; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        .like-btn.liked { background: #ff0000; color: #fff; }
-        .download-btn { background: #333; color: #fff; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
-        .comments-section { padding: 15px; }
-        .comment-item { background: #2a2a2a; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #0f0f0f; color: #fff; margin: 0; padding: 0; }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #1a1a1a; }
+        #profileIcon { width: 40px; height: 40px; border-radius: 50%; background: #444; cursor: pointer; border: 2px solid #ff0000; object-fit: cover; }
+        .main-container { padding: 20px; max-width: 600px; margin: auto; }
+        .video-box { width: 100%; background: #1e1e1e; border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+        .player { width: 100%; background: #000; position: relative; }
+        .recommendations { padding: 20px 0; }
+        .scroll-grid { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 10px; }
+        .rec-card { min-width: 140px; cursor: pointer; }
+        .rec-card img { width: 100%; border-radius: 8px; }
+        .rec-card p { font-size: 12px; margin-top: 5px; color: #ccc; }
+        .comment-box { padding: 20px; background: #1e1e1e; border-radius: 12px; }
+        .comment-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 15px; }
+        .avatar-small { width: 35px; height: 35px; border-radius: 50%; }
     </style>
 </head>
 <body>
 
-    <h1>🎥 Vynzo-Tube</h1>
+<header>
+    <h2 style="color:#ff0000; margin:0;">🎥 Vynzo-Tube</h2>
+    <img id="profileIcon" src="https://via.placeholder.com/100" onclick="openProfile()">
+</header>
 
-    <div class="container">
-        <input type="text" id="videoLink" placeholder="Paste Video URL (YouTube, TikTok, MP4)...">
-        <input type="text" id="videoTitle" placeholder="Video Title...">
-        <textarea id="videoDesc" placeholder="Description..." rows="2"></textarea>
-        <button onclick="displayVideo()">Show Video</button>
+<div class="main-container">
+    <div id="playerContainer" class="video-box"></div>
+    
+    <div class="comment-box">
+        <h3>Comments</h3>
+        <input type="text" id="commentText" placeholder="Write a comment..." style="width:100%; padding:10px; border-radius:5px; margin-bottom:10px;">
+        <button onclick="postComment()" style="padding:10px; background:#ff0000; border:none; color:white; width:100%;">Post</button>
+        <div id="commentsList" style="margin-top:20px;"></div>
     </div>
 
-    <div id="videoDisplay">
-        <div id="playerContainer" class="video-wrapper"></div>
-        <div class="controls">
-            <button class="like-btn" id="likeButton" onclick="toggleLike()">👍🏻 <span id="likeCount">0</span></button>
-            <button class="download-btn" onclick="downloadVideo()">Download</button>
-        </div>
-        <div class="comments-section">
-            <h4>Comments</h4>
-            <input type="text" id="commenterName" placeholder="Name...">
-            <textarea id="commentText" placeholder="Comment..."></textarea>
-            <button onclick="postComment()">Post</button>
-            <div id="commentsList" style="margin-top:15px;"></div>
-        </div>
+    <div class="recommendations">
+        <h3>Trending Videos</h3>
+        <div class="scroll-grid" id="recGrid"></div>
     </div>
+</div>
 
-    <script>
-        let currentVideoLink = "";
-        let currentKey = "";
+<!-- Profile Modal -->
+<div id="profileModal" style="display:none; position:fixed; top:20%; background:#222; padding:20px; border-radius:10px; width:80%; left:10%;">
+    <input type="text" id="newName" placeholder="Enter Name">
+    <input type="file" id="newImg" accept="image/*">
+    <button onclick="saveProfile()">Save Profile</button>
+</div>
 
-        function displayVideo() {
-            const link = document.getElementById('videoLink').value.trim();
-            if (!link) return alert("Enter link!");
-            
-            currentVideoLink = link;
-            currentKey = btoa(link).replace(/=/g, "");
-            const container = document.getElementById('playerContainer');
-            
-            let html = "";
-            if (link.includes("youtube.com") || link.includes("youtu.be")) {
-                let id = link.includes("v=")? link.split("v=")[1].split("&")[0] : link.split("youtu.be/")[1];
-                html = `<iframe height="280" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen></iframe>`;
-            } else if (link.includes("tiktok.com")) {
-                let id = link.match(/\/video\/(\d+)/)[1];
-                html = `<iframe height="500" src="https://www.tiktok.com/embed/v2/${id}" frameborder="0"></iframe>`;
-            } else {
-                html = `<video id="myVideo" height="280" controls playsinline><source src="${link}" type="video/mp4"></video>`;
-            }
+<script>
+    const videos = [
+        {title: "Funny Gaming", thumb: "https://img.youtube.com/vi/kffacxfA7G4/0.jpg", url: "https://www.youtube.com/watch?v=kffacxfA7G4"},
+        {title: "Cartoons", thumb: "https://img.youtube.com/vi/67xV1O-Z_1s/0.jpg", url: "https://www.youtube.com/watch?v=67xV1O-Z_1s"},
+        {title: "Latest Song", thumb: "https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg", url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}
+    ];
 
-            container.innerHTML = html;
-            document.getElementById('videoDisplay').style.display = 'block';
-            
-            // Double Tap Logic for MP4 only
-            if (!html.includes("iframe")) {
-                const vid = document.getElementById('myVideo');
-                let lastTap = 0;
-                vid.addEventListener('touchend', (e) => {
-                    const currentTime = new Date().getTime();
-                    const tapLength = currentTime - lastTap;
-                    if (tapLength < 300 && tapLength > 0) {
-                        const rect = vid.getBoundingClientRect();
-                        const x = e.changedTouches[0].clientX - rect.left;
-                        if (x < rect.width / 2) vid.currentTime -= 10; // Left: -10s
-                        else vid.currentTime += 10; // Right: +10s
-                    }
-                    lastTap = currentTime;
-                });
-            }
-            loadData();
-        }
+    function renderRecs() {
+        const grid = document.getElementById('recGrid');
+        grid.innerHTML = videos.map(v => `
+            <div class="rec-card" onclick="loadVideo('${v.url}')">
+                <img src="${v.thumb}">
+                <p>${v.title}</p>
+            </div>
+        `).join('');
+    }
 
-        function toggleLike() {
-            let likes = parseInt(localStorage.getItem(`likes_${currentKey}`)) || 0;
-            let liked = localStorage.getItem(`liked_${currentKey}`) === "true";
-            
-            if (!liked) { likes++; localStorage.setItem(`liked_${currentKey}`, "true"); }
-            else { likes = Math.max(0, likes - 1); localStorage.setItem(`liked_${currentKey}`, "false"); }
-            
-            localStorage.setItem(`likes_${currentKey}`, likes);
-            updateUI();
-        }
+    function loadVideo(url) {
+        const container = document.getElementById('playerContainer');
+        container.innerHTML = `<iframe width="100%" height="280" src="https://www.youtube.com/embed/${url.split('v=')[1]}" allowfullscreen></iframe>`;
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
 
-        function downloadVideo() {
-            const a = document.createElement('a');
-            a.href = currentVideoLink;
-            a.download = 'vynzo-video.mp4';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
+    function openProfile() { document.getElementById('profileModal').style.display = 'block'; }
+    
+    function saveProfile() {
+        const name = document.getElementById('newName').value;
+        const file = document.getElementById('newImg').files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            localStorage.setItem('uname', name);
+            localStorage.setItem('uimg', e.target.result);
+            location.reload();
+        };
+        reader.readAsDataURL(file);
+    }
 
-        function postComment() {
-            const name = document.getElementById('commenterName').value || "User";
-            const text = document.getElementById('commentText').value;
-            if(!text) return;
-            const comments = JSON.parse(localStorage.getItem(`comm_${currentKey}`)) || [];
-            comments.unshift({name, text});
-            localStorage.setItem(`comm_${currentKey}`, JSON.stringify(comments));
-            updateUI();
-        }
+    function postComment() {
+        const text = document.getElementById('commentText').value;
+        const name = localStorage.getItem('uname') || 'Guest';
+        const img = localStorage.getItem('uimg') || 'https://via.placeholder.com/100';
+        const comments = JSON.parse(localStorage.getItem('comments') || '[]');
+        comments.unshift({name, img, text});
+        localStorage.setItem('comments', JSON.stringify(comments));
+        document.getElementById('commentText').value = '';
+        renderComments();
+    }
 
-        function updateUI() {
-            document.getElementById('likeCount').innerText = localStorage.getItem(`likes_${currentKey}`) || 0;
-            const liked = localStorage.getItem(`liked_${currentKey}`) === "true";
-            document.getElementById('likeButton').className = liked ? "like-btn liked" : "like-btn";
-            
-            const list = document.getElementById('commentsList');
-            list.innerHTML = (JSON.parse(localStorage.getItem(`comm_${currentKey}`)) || []).map(c => 
-                `<div class="comment-item"><b>${c.name}</b>: ${c.text}</div>`).join('');
-        }
-        
-        function loadData() { updateUI(); }
-    </script>
+    function renderComments() {
+        const list = document.getElementById('commentsList');
+        const comments = JSON.parse(localStorage.getItem('comments') || '[]');
+        list.innerHTML = comments.map(c => `
+            <div class="comment-item">
+                <img class="avatar-small" src="${c.img}">
+                <div><b>${c.name}</b><br>${c.text}</div>
+            </div>
+        `).join('');
+    }
+
+    // Init
+    document.getElementById('profileIcon').src = localStorage.getItem('uimg') || 'https://via.placeholder.com/100';
+    renderRecs();
+    renderComments();
+</script>
 </body>
 </html>
