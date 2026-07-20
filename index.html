@@ -17,7 +17,7 @@
         }
         body {
             margin: 0;
-            padding: 20px 20px 80px 20px;
+            padding: 20px 20px 90px 20px;
             min-height: 100vh;
             font-family: Arial, sans-serif;
             text-align: center;
@@ -566,9 +566,9 @@
 
     <!-- Bottom Navigation Bar (Home & Notifications at the very bottom) -->
     <div class="bottom-nav-bar">
-        <button class="bottom-nav-btn active" onclick="switchPage('homePage')">🏠 Home</button>
-        <button class="bottom-nav-btn" onclick="switchPage('notificationsPage')">🔔 Notifications</button>
-        <button class="bottom-nav-btn" onclick="switchPage('chatPage')">💬 Chat Room</button>
+        <button class="bottom-nav-btn active" id="navHome" onclick="switchPage('homePage')">🏠 Home</button>
+        <button class="bottom-nav-btn" id="navNotif" onclick="switchPage('notificationsPage')">🔔 Notifications</button>
+        <button class="bottom-nav-btn" id="navChat" onclick="switchPage('chatPage')">💬 Chat Room</button>
     </div>
 
     <script>
@@ -581,18 +581,16 @@
             appId: "1:1234567890:web:abcdef"
         };
         
-        let db;
+        let db = null;
         try {
-            firebase.initializeApp(firebaseConfig);
-            db = firebase.firestore();
+            if (typeof firebase !== 'undefined') {
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.firestore();
+            }
         } catch (e) {
-            console.log("Firebase initialized");
+            console.log("Firebase fallback mode active");
         }
 
         let username = localStorage.getItem('vynzo_permanent_username') || "";
         let searchedTargetUser = "";
-        let tempPfpBase64 = "";
-
-        window.onload = function() {
-            if (username) {
-                document.getElementById("topUsernameDispl
+        let tempPfpBase64 
