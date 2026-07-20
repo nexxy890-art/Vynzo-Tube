@@ -28,10 +28,31 @@
             align-items: center;
         }
 
+        /* Free Fire Style Lobby Ping Indicator on Top-Right Corner */
+        .ping-indicator {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #444;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 100;
+        }
+        .ping-icon {
+            font-size: 16px;
+        }
+
         /* Vynzo-Tube Text with Red Neon Glow */
         h1 {
             font-size: 32px;
             font-weight: bold;
+            margin-top: 15px;
             margin-bottom: 5px;
             color: #ffffff;
             text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000;
@@ -114,11 +135,34 @@
             overflow: hidden;
             position: relative;
             z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+
+        /* Loading Spinner inside video box */
+        .loader {
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top: 4px solid #ff0000;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            z-index: 3;
+            display: none;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         .video-box iframe {
             width: 100%;
             height: 100%;
             border: none;
+            position: relative;
+            z-index: 4;
         }
         .action-bar {
             display: flex;
@@ -152,6 +196,7 @@
         .like-btn.liked {
             background: #ff0000;
             border-color: #ff0000;
+            box-shadow: 0 0 10px #ff0000;
         }
 
         /* Visitor Counter Badge at the absolute bottom */
@@ -178,6 +223,12 @@
 </head>
 <body>
 
+    <!-- Free Fire Style Lobby Ping Indicator -->
+    <div class="ping-indicator" id="pingIndicator">
+        <span class="ping-icon" id="pingIcon">📶</span>
+        <span id="pingText" style="color: #ffffff;">Checking...</span>
+    </div>
+
     <h1>Vynzo<span>-Tube</span></h1>
     <p>Smooth Cinematic Neon Experience</p>
 
@@ -187,11 +238,13 @@
     </div>
 
     <div class="video-wrapper" id="wrapper" style="display:none;">
-        <div class="video-box" id="videoContainer"></div>
+        <div class="video-box" id="videoContainer">
+            <div class="loader" id="videoLoader"></div>
+        </div>
         
         <div class="action-bar">
             <button class="btn-custom like-btn" id="likeBtn" onclick="toggleLike()">
-                👍 Like <span id="likeCount">0</span>
+                ❤️ Like <span id="likeCount">0</span>
             </button>
             <button class="btn-custom" onclick="shareVideo()">
                 🔗 Share / Copy Link
@@ -202,7 +255,7 @@
         </div>
     </div>
 
-    <!-- Live Visitor Counter Badge with 🎭 style -->
+    <!-- Live Visitor Counter Badge at the very bottom -->
     <div class="visitor-counter">
         🎭 Total Visitors: <span id="visitCount">1</span>
     </div>
@@ -212,6 +265,10 @@
         let currentVideoID = "";
 
         window.onload = function() {
+            // Check Network Ping continuously
+            checkNetworkSpeed();
+            setInterval(checkNetworkSpeed, 4000);
+
             // Check URL for shared video
             const urlParams = new URLSearchParams(window.location.search);
             const sharedID = urlParams.get('v');
@@ -220,7 +277,7 @@
                 playVideo(sharedID);
             }
 
-            // Real Live Visitor Counter using reliable API
+            // Real Live Visitor Counter
             fetch('https://api.counterapi.dev/v1/vynzotube/visits/up')
                 .then(response => response.json())
                 .then(data => {
@@ -229,17 +286,46 @@
                     }
                 })
                 .catch(() => {
-                    // Local fallback so it starts fresh instead of fake high numbers
                     let localVisits = localStorage.getItem('vynzo_visits');
-                    if (!localVisits) {
-                        localVisits = 1;
-                    } else {
-                        localVisits = parseInt(localVisits) + 1;
-                    }
+                    if (!localVisits) { localVisits = 1; } 
+                    else { localVisits = parseInt(localVisits) + 1; }
                     localStorage.setItem('vynzo_visits', localVisits);
                     document.getElementById("visitCount").innerText = localVisits;
                 });
         };
+
+        // Network Speed / Ping Checker (Free Fire Lobby Style)
+        function checkNetworkSpeed() {
+            const pText = document.getElementById("pingText");
+            const pIcon = document.getElementById("pingIcon");
+
+            if (!navigator.onLine) {
+                pText.innerText = "Offline";
+                pText.style.color = "#ff0000";
+                return;
+            }
+
+            let startTime = new Date().getTime();
+            // Ping test using a tiny image request
+            fetch('https://www.google.com/favicon.ico?_=' + startTime, { mode: 'no-cors' })
+                .then(() => {
+                    let duration = new Date().getTime() - startTime;
+                    if (duration < 250) {
+                        pText.innerText = "Fast (" + duration + "ms)";
+                        pText.style.color = "#ffffff"; // White for smooth/fast
+                    } else if (duration < 600) {
+                        pText.innerText = "Normal (" + duration + "ms)";
+                        pText.style.color = "#ffff00"; // Yellow for moderate/normal
+                    } else {
+                        pText.innerText = "Slow (" + duration + "ms)";
+                        pText.style.color = "#ff0000"; // Red for slow
+                    }
+                })
+                .catch(() => {
+                    pText.innerText = "Poor Net";
+                    pText.style.color = "#ff0000"; // Red if request fails
+                });
+        }
 
         function extractVideoID(input) {
             if (!input) return null;
@@ -266,17 +352,29 @@
             currentVideoID = videoID;
             let wrapper = document.getElementById("wrapper");
             let container = document.getElementById("videoContainer");
+            let loader = document.getElementById("videoLoader");
             let downloadBtn = document.getElementById("downloadBtn");
 
             wrapper.style.display = "block";
             downloadBtn.href = `https://www.ssyoutube.com/watch?v=${videoID}`;
             
-            container.innerHTML = `
-                <iframe src="https://www.youtube.com/embed/${videoID}?autoplay=1&rel=0&modestbranding=1" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen>
-                </iframe>
-            `;
+            // Show loader while video iframe loads
+            loader.style.display = "block";
+
+            // Create iframe
+            let iframe = document.createElement('iframe');
+            iframe.src = `https://www.youtube.com/embed/${videoID}?autoplay=1&rel=0&modestbranding=1`;
+            iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+            iframe.allowFullscreen = true;
+
+            iframe.onload = function() {
+                loader.style.display = "none"; // Hide loader when video loads successfully
+            };
+
+            // Clear previous iframe if any and append new one with loader
+            let oldIframe = container.querySelector('iframe');
+            if (oldIframe) oldIframe.remove();
+            container.appendChild(iframe);
         }
 
         function shareVideo() {
@@ -304,8 +402,6 @@
             let countSpan = document.getElementById("likeCount");
             let count = parseInt(countSpan.innerText);
 
-            if (!is_liked) { // handled via isLiked
-            }
             if (!isLiked) {
                 isLiked = true;
                 btn.classList.add("liked");
@@ -319,4 +415,5 @@
     </script>
 
 </body>
-</html>
+    </html>
+    
