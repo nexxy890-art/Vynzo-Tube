@@ -5,17 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vynzo-Tube</title>
     <style>
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
         body {
-            background-color: #0f0f0f;
+            background: linear-gradient(-45deg, #0f0f0f, #1a0000, #000000, #26001a);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
             color: #ffffff;
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 0;
             padding: 20px;
+            min-height: 100vh;
         }
         h1 {
             color: #ff0000;
             margin-bottom: 5px;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
         }
         p {
             color: #aaa;
@@ -28,86 +37,226 @@
         input[type="text"] {
             width: 80%;
             max-width: 400px;
-            padding: 10px;
+            padding: 12px;
             font-size: 14px;
             border: 1px solid #444;
-            border-radius: 5px;
-            background-color: #222;
+            border-radius: 8px;
+            background-color: rgba(34, 34, 34, 0.8);
             color: #fff;
             outline: none;
+            backdrop-filter: blur(5px);
         }
         button {
-            padding: 10px 20px;
+            padding: 12px 20px;
             font-size: 14px;
             background-color: #ff0000;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
             margin-left: 5px;
+            box-shadow: 0 4px 10px rgba(255, 0, 0, 0.3);
+            transition: 0.2s;
         }
         button:hover {
             background-color: #cc0000;
         }
-        .video-box {
+        .video-wrapper {
             width: 100%;
             max-width: 560px;
-            aspect-ratio: 16 / 9;
-            background-color: #ffffff;
             margin: 0 auto;
+            background: rgba(20, 20, 20, 0.7);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .video-box {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background-color: #000;
             border-radius: 8px;
             overflow: hidden;
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
-        .video-box iframe {
+        #ytplayer {
             width: 100%;
             height: 100%;
             border: none;
         }
+        .tap-layer {
+            position: absolute;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            z-index: 10;
+        }
+        .tap-left { left: 0; }
+        .tap-right { right: 0; }
+
         .placeholder-text {
-            color: #666;
+            color: #888;
             font-size: 14px;
+        }
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding: 0 5px;
+        }
+        .like-btn, .download-btn {
+            background: #2a2a2a;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.2s;
+        }
+        .like-btn.liked {
+            background: #ff0000;
+            border-color: #ff0000;
+        }
+        .download-btn {
+            background: #0066cc;
+            border-color: #0055aa;
+            text-decoration: none;
+        }
+        .download-btn:hover {
+            background: #0055aa;
         }
     </style>
 </head>
 <body>
 
     <h1>Vynzo-Tube</h1>
-    <p>Apni pasand ki YouTube video ka link yahan paste karein</p>
+    <p>Apni pasand ki YouTube video yahan chalayein</p>
 
     <div class="input-container">
-        <input type="text" id="videoUrl" placeholder="https://youtu.be/...">
-        <button onclick="playVideo()">Video Chalayein</button>
+        <input type="text" id="videoUrl" placeholder="YouTube ka link yahan paste karein...">
+        <button onclick="loadVideo()">Video Chalayein</button>
     </div>
 
-    <div class="video-box" id="videoContainer">
-        <span class="placeholder-text">Yahan video chalegi</span>
+    <div class="video-wrapper" id="wrapper" style="display:none;">
+        <div class="video-box">
+            <div id="ytplayer"></div>
+            <div class="tap-layer tap-left" onclick="handleDoubleTap('left')"></div>
+            <div class="tap-layer tap-right" onclick="handleDoubleTap('right')"></div>
+        </div>
+        
+        <div class="action-bar">
+            <button class="like-btn" id="likeBtn" onclick="toggleLike()">
+                👍 Like <span id="likeCount">0</span>
+            </button>
+            <a id="downloadBtn" href="#" target="_blank" class="download-btn">
+                📥 Download Video
+            </a>
+        </div>
     </div>
 
+    <!-- YouTube IFrame API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
+        let player;
+        let lastTapLeft = 0;
+        let lastTapRight = 0;
+        let isLiked = false;
+        let pendingVideoID = "";
+
         function extractVideoID(url) {
             let regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
             let match = url.match(regExp);
             return (match && match[2].length === 11) ? match[2] : null;
         }
 
-        function playVideo() {
+        function loadVideo() {
             let url = document.getElementById("videoUrl").value;
             let videoID = extractVideoID(url);
-            let container = document.getElementById("videoContainer");
+            let wrapper = document.getElementById("wrapper");
+            let downloadBtn = document.getElementById("downloadBtn");
 
             if (videoID) {
-                container.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoID}?autoplay=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                pendingVideoID = videoID;
+                wrapper.style.display = "block";
+                downloadBtn.href = `https://www.ssyoutube.com/watch?v=${videoID}`;
+
+                if (player && typeof player.loadVideoById === 'function') {
+                    player.loadVideoById(videoID);
+                } else {
+                    onYouTubeIframeAPIReady();
+                }
             } else {
                 alert("Ghalat link! Baraye meharbani theek YouTube link dalein.");
+            }
+        }
+
+        function onYouTubeIframeAPIReady() {
+            if (!pendingVideoID) return;
+            if (player) {
+                player.loadVideoById(pendingVideoID);
+                return;
+            }
+            player = new YT.Player('ytplayer', {
+                height: '100%',
+                width: '100%',
+                videoId: pendingVideoID,
+                playerVars: {
+                    'autoplay': 1,
+                    'controls': 1,
+                    'rel': 0
+                }
+            });
+        }
+
+        function handleDoubleTap(side) {
+            if (!player || typeof player.getCurrentTime !== 'function') return;
+            let now = new Date().getTime();
+            let currentTime = player.getCurrentTime();
+
+            if (side === 'left') {
+                if (now - lastTapLeft < 300) {
+                    // Double tap left -> Rewind 11 seconds
+                    let newTime = Math.max(0, currentTime - 11);
+                    player.seekTo(newTime, true);
+                }
+                lastTapLeft = now;
+            } else {
+                if (now - lastTapRight < 300) {
+                    // Double tap right -> Forward 10 seconds
+                    let newTime = currentTime + 10;
+                    player.seekTo(newTime, true);
+                }
+                lastTapRight = now;
+            }
+        }
+
+        function toggleLike() {
+            let btn = document.getElementById("likeBtn");
+            let countSpan = document.getElementById("likeCount");
+            let count = parseInt(countSpan.innerText);
+
+            if (!isLiked) {
+                isLiked = true;
+                btn.classList.add("liked");
+                countSpan.innerText = count + 1;
+            } else {
+                isLiked = false;
+                btn.classList.remove("liked");
+                countSpan.innerText = count - 1;
             }
         }
     </script>
 
 </body>
     </html>
-    
+                                                         
