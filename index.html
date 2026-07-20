@@ -210,23 +210,6 @@
             z-index: 1;
         }
 
-        .video-wrapper::before {
-            content: '';
-            position: absolute;
-            inset: -3px;
-            border-radius: 19px;
-            background: linear-gradient(90deg, #00f0ff, #0077ff, #7928ca, #ff007f, #39ff14, #00f0ff);
-            background-size: 400% 400%;
-            z-index: -1;
-            animation: rainbowCarRun 3s linear infinite;
-        }
-
-        @keyframes rainbowCarRun {
-            0% { background-position: 0% 50%; filter: hue-rotate(0deg); }
-            50% { background-position: 100% 50%; filter: hue-rotate(180deg); }
-            100% { background-position: 0% 50%; filter: hue-rotate(360deg); }
-        }
-
         .video-box {
             width: 100%;
             aspect-ratio: 16 / 9;
@@ -285,12 +268,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: 0.2s;
             text-decoration: none;
-        }
-        .btn-custom:hover {
-            background: #333;
-            border-color: #777;
         }
         .like-btn.liked {
             background: #ff0000;
@@ -392,9 +370,8 @@
             cursor: pointer;
             font-size: 13px;
             font-weight: bold;
-            transition: 0.2s;
         }
-        .bottom-nav-btn.active, .bottom-nav-btn:hover {
+        .bottom-nav-btn.active {
             background: #ff0000;
             border-color: #ff0000;
             box-shadow: 0 0 10px rgba(255,0,0,0.5);
@@ -461,18 +438,16 @@
     <!-- Ping Indicator Top-Right -->
     <div class="ping-indicator" id="pingIndicator">
         <span id="pingIcon">📶</span>
-        <span id="pingText" style="color: #ffffff;">Checking...</span>
+        <span id="pingText" style="color: #00f0ff;">Online</span>
     </div>
 
     <!-- HOME PAGE SECTION -->
     <div id="homePage" class="page-section active">
-        <!-- Sabse Upar: Search Your Friend Bar -->
         <div class="friend-search-container">
             <input type="text" id="friendSearchInput" placeholder="Search your friend (e.g. Ali123)...">
             <button onclick="searchFriend()">Search</button>
         </div>
 
-        <!-- Friend Search Result Box with 📩 icon -->
         <div class="friend-result-box" id="friendResultBox">
             <div class="friend-info">
                 <img id="foundUserPic" src="" alt="PFP">
@@ -481,7 +456,6 @@
             <button onclick="sendChatRequest()" style="background:#ff0000; color:#fff; border:none; padding:6px 12px; border-radius:8px; cursor:pointer; font-weight:bold;">📩 Request</button>
         </div>
 
-        <!-- Uss se neeche: YouTube Video Search Bar -->
         <div class="top-search-container">
             <input type="text" id="videoUrl" placeholder="YouTube video link ya ID search karein...">
             <button onclick="playVideoFromInput()">Search</button>
@@ -500,7 +474,7 @@
                     ❤️ Like <span id="likeCount">0</span>
                 </button>
                 <button class="btn-custom" onclick="shareVideo()">
-                    🔗 Share / Copy Link
+                    🔗 Share Link
                 </button>
                 <a id="downloadBtn" href="#" target="_blank" class="btn-custom">
                     📥 Download
@@ -508,7 +482,6 @@
             </div>
         </div>
 
-        <!-- Live Visitor Counter Badge -->
         <div class="visitor-counter">
             🎭 Total Visitors: <span id="visitCount">1</span>
         </div>
@@ -525,10 +498,10 @@
                 <span id="chatUsernameLabel" style="font-size: 12px; color: #bbb;"></span>
             </div>
             <div class="chat-messages" id="chatMessages">
-                <div style="color: #666; text-align: center; margin-top: 60px;">Chat load ho rahi hai...</div>
+                <div style="color: #666; text-align: center; margin-top: 60px;">Pehla message aap bhejein!</div>
             </div>
             <div class="chat-input-box">
-                <input type="text" id="chatInput" placeholder="Message likhein (Long-press for Edit/Delete)..." onkeypress="checkEnter(event)">
+                <input type="text" id="chatInput" placeholder="Message likhein..." onkeypress="checkEnter(event)">
                 <button onclick="sendMessage()">Bhejo</button>
             </div>
         </div>
@@ -564,7 +537,7 @@
         </div>
     </div>
 
-    <!-- Bottom Navigation Bar (Home & Notifications at the very bottom) -->
+    <!-- Bottom Navigation Bar -->
     <div class="bottom-nav-bar">
         <button class="bottom-nav-btn active" id="navHome" onclick="switchPage('homePage')">🏠 Home</button>
         <button class="bottom-nav-btn" id="navNotif" onclick="switchPage('notificationsPage')">🔔 Notifications</button>
@@ -588,9 +561,32 @@
                 db = firebase.firestore();
             }
         } catch (e) {
-            console.log("Firebase fallback mode active");
+            console.log("Firebase fallback active");
         }
 
         let username = localStorage.getItem('vynzo_permanent_username') || "";
         let searchedTargetUser = "";
-        let tempPfpBase64 
+        let tempPfpBase64 = "";
+
+        window.onload = function() {
+            try {
+                if (username) {
+                    let topName = document.getElementById("topUsernameDisplay");
+                    if(topName) topName.innerText = username;
+                    let chatLbl = document.getElementById("chatUsernameLabel");
+                    if(chatLbl) chatLbl.innerText = "👤 " + username;
+                    let profInput = document.getElementById("profileUsernameInput");
+                    if(profInput) profInput.value = username;
+                    
+                    let savedPfp = localStorage.getItem('vynzo_pfp_' + username);
+                    if (savedPfp) {
+                        let topPic = document.getElementById("topProfilePic");
+                        if(topPic) topPic.src = savedPfp;
+                        let prevImg = document.getElementById("profilePreviewImg");
+                        if(prevImg) prevImg.src = savedPfp;
+                        tempPfpBase64 = savedPfp;
+                    }
+                }
+                loadChatMessages();
+                loadNotifications();
+            } catch(
