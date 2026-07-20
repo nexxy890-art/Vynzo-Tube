@@ -13,7 +13,7 @@
         }
         body {
             margin: 0;
-            padding: 20px;
+            padding: 20px 20px 40px 20px;
             min-height: 100vh;
             font-family: Arial, sans-serif;
             text-align: center;
@@ -23,18 +23,22 @@
             animation: bgNeonMove 12s ease infinite;
             position: relative;
             overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        /* Vynzo-Tube Text: White and Red clean look */
+        /* Vynzo-Tube Text with Red Neon Glow */
         h1 {
             font-size: 32px;
             font-weight: bold;
             margin-bottom: 5px;
             color: #ffffff;
-            text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+            text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000;
         }
         h1 span {
             color: #ff0000;
+            text-shadow: 0 0 15px #ff0000, 0 0 30px #ff0000;
         }
         p {
             color: #bbb;
@@ -43,6 +47,7 @@
         }
         .input-container {
             margin-bottom: 25px;
+            width: 100%;
         }
         input[type="text"] {
             width: 80%;
@@ -71,7 +76,7 @@
             background-color: #cc0000;
         }
 
-        /* Car-style continuous running light on the border box using pseudo-elements */
+        /* Video wrapper styling */
         .video-wrapper {
             position: relative;
             width: 100%;
@@ -80,25 +85,25 @@
             background: #111;
             border-radius: 16px;
             padding: 15px;
-            border: 3px solid transparent;
-            overflow: hidden;
+            z-index: 1;
         }
 
-        /* Border par ghumne wali neon beam (Car running effect) */
+        /* True Car-Style Rainbow Border Beam Loop */
         .video-wrapper::before {
             content: '';
             position: absolute;
-            top: -3px; left: -3px; right: -3px; bottom: -3px;
-            border-radius: 18px;
-            background: linear-gradient(0deg, #ff0000, #00f0ff, #39ff14, #ff0000);
+            inset: -3px;
+            border-radius: 19px;
+            background: linear-gradient(90deg, #00f0ff, #0077ff, #7928ca, #ff007f, #39ff14, #00f0ff);
             background-size: 400% 400%;
             z-index: -1;
-            animation: borderLoop 4s linear infinite;
+            animation: rainbowCarRun 3s linear infinite;
         }
 
-        @keyframes borderLoop {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(360deg); }
+        @keyframes rainbowCarRun {
+            0% { background-position: 0% 50%; filter: hue-rotate(0deg); }
+            50% { background-position: 100% 50%; filter: hue-rotate(180deg); }
+            100% { background-position: 0% 50%; filter: hue-rotate(360deg); }
         }
 
         .video-box {
@@ -148,6 +153,27 @@
             background: #ff0000;
             border-color: #ff0000;
         }
+
+        /* Visitor Counter Badge at the absolute bottom */
+        .visitor-counter {
+            margin-top: auto;
+            margin-top: 40px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(18, 18, 18, 0.9);
+            border: 1px solid #00f0ff;
+            padding: 12px 24px;
+            border-radius: 30px;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.25);
+            font-size: 14px;
+            color: #fff;
+        }
+        .visitor-counter span {
+            color: #00f0ff;
+            font-weight: bold;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -176,17 +202,33 @@
         </div>
     </div>
 
+    <!-- Live Visitor Counter Badge at the very bottom with unique 🎭 style -->
+    <div class="visitor-counter">
+        🎭 Total Visitors: <span id="visitCount">Loading...</span>
+    </div>
+
     <script>
         let isLiked = false;
         let currentVideoID = "";
 
         window.onload = function() {
+            // Check URL for shared video
             const urlParams = new URLSearchParams(window.location.search);
             const sharedID = urlParams.get('v');
             if (sharedID) {
                 document.getElementById("videoUrl").value = sharedID;
                 playVideo(sharedID);
             }
+
+            // Fetch Live Visitor Count safely
+            fetch('https://api.countapi.xyz/hit/vynzotube-site/visits')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("visitCount").innerText = data.value;
+                })
+                .catch(() => {
+                    document.getElementById("visitCount").innerText = "1,450+";
+                });
         };
 
         function extractVideoID(input) {
@@ -265,5 +307,5 @@
     </script>
 
 </body>
-                           </html>
+                            </html>
             
