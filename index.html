@@ -20,75 +20,94 @@
         p {
             color: #aaa;
             font-size: 14px;
+            margin-bottom: 20px;
         }
-        .container {
-            margin-top: 30px;
+        .input-container {
+            margin-bottom: 20px;
         }
-        input {
+        input[type="text"] {
             width: 80%;
             max-width: 400px;
             padding: 10px;
-            font-size: 16px;
-            border-radius: 5px;
+            font-size: 14px;
             border: 1px solid #444;
+            border-radius: 5px;
             background-color: #222;
             color: #fff;
             outline: none;
         }
         button {
             padding: 10px 20px;
-            font-size: 16px;
+            font-size: 14px;
             background-color: #ff0000;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            margin-top: 10px;
+            font-weight: bold;
+            margin-left: 5px;
         }
         button:hover {
             background-color: #cc0000;
         }
         .video-box {
-            margin-top: 25px;
-        }
-        iframe {
             width: 100%;
             max-width: 560px;
-            height: 315px;
-            border-radius: 10px;
+            aspect-ratio: 16 / 9;
+            background-color: #ffffff;
+            margin: 0 auto;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .video-box iframe {
+            width: 100%;
+            height: 100%;
             border: none;
+        }
+        .placeholder-text {
+            color: #666;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
 
     <h1>Vynzo-Tube</h1>
-    <p>Apni pasand ki video yahan dekhein</p>
+    <p>Apni pasand ki YouTube video ka link yahan paste karein</p>
 
-    <div class="container">
-        <input type="text" id="videoInput" placeholder="YouTube Video ID yahan paste karein">
-        <br>
+    <div class="input-container">
+        <input type="text" id="videoUrl" placeholder="https://youtu.be/...">
         <button onclick="playVideo()">Video Chalayein</button>
     </div>
 
     <div class="video-box" id="videoContainer">
-        <!-- Video yahan load hogi -->
+        <span class="placeholder-text">Yahan video chalegi</span>
     </div>
 
     <script>
+        function extractVideoID(url) {
+            let regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            let match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
         function playVideo() {
-            let input = document.getElementById("videoInput").value.trim();
+            let url = document.getElementById("videoUrl").value;
+            let videoID = extractVideoID(url);
             let container = document.getElementById("videoContainer");
-            
-            if (input !== "") {
-                container.innerHTML = `<iframe src="https://www.youtube.com/embed/${input}" allowfullscreen></iframe>`;
+
+            if (videoID) {
+                container.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoID}?autoplay=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
             } else {
-                alert("Pehle sahi ID dalein!");
+                alert("Ghalat link! Baraye meharbani theek YouTube link dalein.");
             }
         }
     </script>
 
 </body>
     </html>
- 
     
