@@ -99,10 +99,6 @@
         .tap-left { left: 0; }
         .tap-right { right: 0; }
 
-        .placeholder-text {
-            color: #888;
-            font-size: 14px;
-        }
         .action-bar {
             display: flex;
             justify-content: space-between;
@@ -173,15 +169,30 @@
         let isLiked = false;
         let pendingVideoID = "";
 
-        function extractVideoID(url) {
-            let regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            let match = url.match(regExp);
-            return (match && match[2].length === 11) ? match[2] : null;
+        function extractVideoID(input) {
+            if (!input) return null;
+            // Agar user ne poora ganda link ya extra text paste kiya ho toh usko saaf karna
+            let cleanInput = input.trim();
+            
+            // Regular expression jo YouTube ke kisi bhi format se 11-character ID nikal le
+            let regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+            let match = cleanInput.match(regExp);
+            
+            if (match && match[1]) {
+                return match[1];
+            }
+            
+            // Agar seedha 11 character ki ID di ho
+            if (cleanInput.length === 11) {
+                return cleanInput;
+            }
+            
+            return null;
         }
 
         function loadVideo() {
-            let url = document.getElementById("videoUrl").value;
-            let videoID = extractVideoID(url);
+            let inputVal = document.getElementById("videoUrl").value;
+            let videoID = extractVideoID(inputVal);
             let wrapper = document.getElementById("wrapper");
             let downloadBtn = document.getElementById("downloadBtn");
 
@@ -225,14 +236,12 @@
 
             if (side === 'left') {
                 if (now - lastTapLeft < 300) {
-                    // Double tap left -> Rewind 11 seconds
                     let newTime = Math.max(0, currentTime - 11);
                     player.seekTo(newTime, true);
                 }
                 lastTapLeft = now;
             } else {
                 if (now - lastTapRight < 300) {
-                    // Double tap right -> Forward 10 seconds
                     let newTime = currentTime + 10;
                     player.seekTo(newTime, true);
                 }
@@ -259,4 +268,4 @@
 
 </body>
     </html>
-                                                         
+    
