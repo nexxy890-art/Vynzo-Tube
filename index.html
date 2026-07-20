@@ -117,6 +117,7 @@
             box-sizing: border-box;
             animation: neonRainbow 6s infinite;
             border: 2px solid #33cc33;
+            margin-bottom: 25px;
         }
 
         .video-box {
@@ -184,7 +185,7 @@
         }
 
         .visitor-counter {
-            margin-top: 25px;
+            margin-bottom: 25px;
             display: inline-flex;
             align-items: center;
             gap: 10px;
@@ -201,9 +202,8 @@
             font-weight: bold;
         }
 
-        /* Play Store Style Rating & Review Section */
+        /* Clean 5-Star Rating Section */
         .rating-section {
-            margin-top: 25px;
             width: 100%;
             background: rgba(18, 18, 18, 0.95);
             animation: neonRainbow 6s infinite;
@@ -211,21 +211,20 @@
             padding: 15px;
             border-radius: 16px;
             box-sizing: border-box;
-            text-align: left;
+            text-align: center;
         }
         .rating-section h4 {
-            margin: 0 0 10px 0;
-            font-size: 16px;
+            margin: 0 0 8px 0;
+            font-size: 15px;
             color: #ff9900;
-            text-align: center;
         }
         .stars-container {
             display: flex;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
             font-size: 28px;
             cursor: pointer;
-            margin-bottom: 12px;
+            margin-bottom: 6px;
         }
         .star {
             color: #222;
@@ -238,60 +237,9 @@
             text-shadow: 0 0 10px #ffcc00;
             transform: scale(1.1);
         }
-        .review-input-box {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-        .review-input-box input, .review-input-box textarea {
-            padding: 10px 12px;
-            background: #121212;
-            border: 1px solid #444;
-            color: #fff;
-            border-radius: 8px;
-            font-size: 13px;
-            outline: none;
-            font-family: Arial, sans-serif;
-        }
-        .review-input-box textarea {
-            resize: none;
-            height: 50px;
-        }
-        .review-input-box button {
-            background: #ff9900;
-            color: #000;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .reviews-list {
-            max-height: 180px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            border-top: 1px solid #333;
-            padding-top: 10px;
-        }
-        .review-item {
-            background: #111;
-            padding: 8px 12px;
-            border-radius: 8px;
-            border-left: 3px solid #ff9900;
-            font-size: 13px;
-        }
-        .review-user {
-            color: #ff9900;
-            font-weight: bold;
-            margin-right: 6px;
-        }
-        .review-stars {
-            color: #ffcc00;
+        .rating-info {
             font-size: 12px;
-            margin-bottom: 3px;
+            color: #bbb;
         }
     </style>
 </head>
@@ -334,39 +282,26 @@
             🎭 Total Visitors: <span id="visitCount">1</span>
         </div>
 
-        <!-- Play Store Style Rating & Review Section -->
+        <!-- Clean 5-Star Rating Box -->
         <div class="rating-section">
-            <h4>⭐ Website ko Rate & Review Karein</h4>
+            <h4>⭐ Website ko Rate Karein</h4>
             <div class="stars-container" id="starsContainer">
-                <span class="star" onclick="setRating(1)">★</span>
-                <span class="star" onclick="setRating(2)">★</span>
-                <span class="star" onclick="setRating(3)">★</span>
-                <span class="star" onclick="setRating(4)">★</span>
-                <span class="star" onclick="setRating(5)">★</span>
+                <span class="star" onclick="rateWebsite(1)">★</span>
+                <span class="star" onclick="rateWebsite(2)">★</span>
+                <span class="star" onclick="rateWebsite(3)">★</span>
+                <span class="star" onclick="rateWebsite(4)">★</span>
+                <span class="star" onclick="rateWebsite(5)">★</span>
             </div>
-            
-            <div class="review-input-box">
-                <input type="text" id="reviewName" placeholder="Apna Naam Likhein...">
-                <textarea id="reviewText" placeholder="Apna review yahan likhein..."></textarea>
-                <button onclick="postReview()">Review Bhejo</button>
-            </div>
-
-            <div class="reviews-list" id="reviewsList">
-                <div style="color: #666; text-align: center; font-size: 12px;">Abhi koi review nahi hai. Pehla review aap dein!</div>
-            </div>
+            <div class="rating-info">Average: <span id="avgRating">4.8</span>/5 (<span id="totalVotes">14</span> votes)</div>
         </div>
     </div>
 
     <script>
         let currentVideoID = "";
         let isLiked = false;
-        let selectedStars = 0;
 
         window.onload = function() {
             try {
-                let savedName = localStorage.getItem('vynzo_reviewer_name') || "";
-                if(savedName) document.getElementById("reviewName").value = savedName;
-
                 const urlParams = new URLSearchParams(window.location.search);
                 let vParam = urlParams.get('v');
                 if (vParam) {
@@ -385,7 +320,7 @@
                 let visitSpan = document.getElementById("visitCount");
                 if(visitSpan) visitSpan.innerText = visits;
 
-                loadReviews();
+                loadRatingData();
                 updatePing();
                 setInterval(updatePing, 4000);
             } catch(e) {}
@@ -425,98 +360,47 @@
             img.src = "https://www.google.com/favicon.ico?t=" + startTime;
         }
 
-        // Star Rating Selection
-        function setRating(stars) {
-            selectedStars = stars;
+        // Star Rating Logic via LocalStorage
+        function rateWebsite(stars) {
+            let savedRatings = JSON.parse(localStorage.getItem('vynzo_ratings_data') || '{"totalScore": 67, "votes": 14}');
+            let userVoted = localStorage.getItem('vynzo_user_voted');
+
+            if (!userVoted) {
+                savedRatings.totalScore += stars;
+                savedRatings.votes += 1;
+                localStorage.setItem('vynzo_user_voted', stars);
+                localStorage.setItem('vynzo_ratings_data', JSON.stringify(savedRatings));
+                alert("Shukriya! Aapki rating save ho gayi hai ⭐");
+            } else {
+                let oldStars = parseInt(userVoted);
+                savedRatings.totalScore = savedRatings.totalScore - oldStars + stars;
+                localStorage.setItem('vynzo_user_voted', stars);
+                localStorage.setItem('vynzo_ratings_data', JSON.stringify(savedRatings));
+                alert("Aapki rating update ho gayi hai! ⭐");
+            }
+
+            loadRatingData();
+        }
+
+        function loadRatingData() {
+            let savedRatings = JSON.parse(localStorage.getItem('vynzo_ratings_data') || '{"totalScore": 67, "votes": 14}');
+            let userVoted = parseInt(localStorage.getItem('vynzo_user_voted') || '0');
+
+            let avg = (savedRatings.totalScore / savedRatings.votes).toFixed(1);
+            let avgSpan = document.getElementById("avgRating");
+            let votesSpan = document.getElementById("totalVotes");
+
+            if(avgSpan) avgSpan.innerText = avg;
+            if(votesSpan) votesSpan.innerText = savedRatings.votes;
+
             let starElements = document.querySelectorAll('.stars-container .star');
             starElements.forEach((star, index) => {
-                if (index < stars) {
+                if (index < userVoted) {
                     star.classList.add('active');
                 } else {
                     star.classList.remove('active');
                 }
             });
-        }
-
-        // Post Review & Rating
-        function postReview() {
-            let nameInput = document.getElementById("reviewName");
-            let textInput = document.getElementById("reviewText");
-            
-            let name = nameInput ? nameInput.value.trim() : "";
-            let text = textInput ? textInput.value.trim() : "";
-
-            if (selectedStars === 0) {
-                alert("Baraye meharbani kam az kam aik star select karein!");
-                return;
-            }
-            if (!name) {
-                alert("Apna naam likhna zaroori hai!");
-                return;
-            }
-            if (!text) {
-                alert("Apna review likhein!");
-                return;
-            }
-
-            localStorage.setItem('vynzo_reviewer_name', name);
-
-            let reviews = JSON.parse(localStorage.getItem('vynzo_website_reviews') || '[]');
-            reviews.unshift({
-                name: name,
-                stars: selectedStars,
-                text: text,
-                time: Date.now()
-            });
-
-            localStorage.setItem('vynzo_website_reviews', JSON.stringify(reviews));
-            textInput.value = "";
-            loadReviews();
-            alert("Aapka review save ho gaya hai, Shukriya! ⭐");
-        }
-
-        function loadReviews() {
-            let reviewsListDiv = document.getElementById("reviewsList");
-            if (!reviewsListDiv) return;
-
-            let reviews = JSON.parse(localStorage.getItem('vynzo_website_reviews') || '[]');
-            if (reviews.length === 0) {
-                reviewsListDiv.innerHTML = '<div style="color: #666; text-align: center; font-size: 12px;">Abhi koi review nahi hai. Pehla review aap dein!</div>';
-                return;
-            }
-
-            reviewsListDiv.innerHTML = "";
-            reviews.forEach(r => {
-                let starStr = "★".repeat(r.stars) + "☆".repeat(5 - r.stars);
-                reviewsListDiv.innerHTML += `
-                    <div class="review-item">
-                        <div class="review-stars">${starStr}</div>
-                        <div><span class="review-user">${escapeHtml(r.name)}:</span> <span>${escapeHtml(r.text)}</span></div>
-                    </div>
-                `;
-            });
-        }
-
-        function escapeHtml(text) {
-            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        }
-
-        // Direct Clean Video Download Trigger
-        function downloadVideo() {
-            if (!currentVideoID) {
-                alert("Pehle koi video chalayein!");
-                return;
-            }
-            
-            // Direct browser download mechanism without redirecting to external site
-            alert("Video download shuru ho rahi hai...");
-            let anchor = document.createElement('a');
-            anchor.href = `https://www.youtube.com/watch?v=${currentVideoID}`;
-            anchor.target = "_blank";
-            anchor.download = `VynzoTube_${currentVideoID}.mp4`;
-            document.body.appendChild(anchor);
-            anchor.click();
-            document.body.removeChild(anchor);
         }
 
         function extractVideoID(input) {
@@ -576,6 +460,37 @@
             });
         }
 
+        function downloadVideo() {
+            if (!currentVideoID) {
+                alert("Pehle koi video chalayein!");
+                return;
+            }
+            alert("Video download shuru ho rahi hai...");
+            let anchor = document.createElement('a');
+            anchor.href = `https://www.youtube.com/watch?v=${currentVideoID}`;
+            anchor.target = "_blank";
+            anchor.download = `VynzoTube_${currentVideoID}.mp4`;
+            document.body.appendChild(anchor);
+            anchor.click();
+            document.body.removeChild(anchor);
+        }
+
         function toggleLike() {
             let btn = document.getElementById("likeBtn");
-            let countSpan = document.getE
+            let countSpan = document.getElementById("likeCount");
+            if(!countSpan) return;
+            let count = parseInt(countSpan.innerText);
+            if (!isLiked) {
+                isLiked = true;
+                if(btn) btn.classList.add("liked");
+                countSpan.innerText = count + 1;
+            } else {
+                isLiked = false;
+                if(btn) btn.classList.remove("liked");
+                countSpan.innerText = count - 1;
+            }
+        }
+    </script>
+</body>
+    </html>
+                    
