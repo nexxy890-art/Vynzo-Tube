@@ -3,21 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vynzo-Tube Pro Ultimate</title>
-    
-    <!-- Firebase SDKs for Google Cloud Database -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <title>Vynzo-Tube</title>
 
     <style>
+        @keyframes neonRainbow {
+            0% { border-color: #ff0000; box-shadow: 0 0 15px #ff0000; }
+            20% { border-color: #ff9900; box-shadow: 0 0 15px #ff9900; }
+            40% { border-color: #33cc33; box-shadow: 0 0 15px #33cc33; }
+            60% { border-color: #00f0ff; box-shadow: 0 0 15px #00f0ff; }
+            80% { border-color: #cc00ff; box-shadow: 0 0 15px #cc00ff; }
+            100% { border-color: #ff0000; box-shadow: 0 0 15px #ff0000; }
+        }
+
         @keyframes bgNeonMove {
             0% { background-position: 0% 0%; }
             50% { background-position: 100% 100%; }
             100% { background-position: 0% 0%; }
         }
+
         body {
             margin: 0;
-            padding: 20px 20px 90px 20px;
+            padding: 40px 20px 40px 20px;
             min-height: 100vh;
             font-family: Arial, sans-serif;
             text-align: center;
@@ -25,36 +31,10 @@
             background: linear-gradient(135deg, #05000a, #001a1a, #1a001a, #05000a);
             background-size: 400% 400%;
             animation: bgNeonMove 12s ease infinite;
-            position: relative;
-            overflow-x: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
-        }
-
-        /* Top-Left Profile Button */
-        .profile-btn {
-            position: absolute;
-            top: 15px;
-            left: 20px;
-            background: rgba(18, 18, 18, 0.85);
-            border: 1px solid #ff0000;
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            color: #fff;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            z-index: 100;
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
-        }
-        .profile-btn img {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            object-fit: cover;
+            box-sizing: border-box;
         }
 
         /* Ping Indicator Top-Right */
@@ -71,93 +51,21 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            z-index: 100;
         }
 
-        /* Pages View Controller */
-        .page-section {
+        .main-container {
             width: 100%;
             max-width: 560px;
-            display: none;
+            display: flex;
             flex-direction: column;
             align-items: center;
-        }
-        .page-section.active {
-            display: flex;
+            margin-top: 30px;
         }
 
-        /* Universal Back Bar */
-        .back-bar {
-            width: 100%;
-            text-align: left;
-            margin-bottom: 12px;
-        }
-        .back-bar button {
-            background: #222;
-            border: 1px solid #666;
-            color: #fff;
-            padding: 8px 14px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: bold;
-        }
-
-        /* Top-Most Search Bar: Search Your Friend */
-        .friend-search-container {
-            width: 100%;
-            margin-top: 15px;
-            margin-bottom: 12px;
-            display: flex;
-            gap: 8px;
-        }
-        .friend-search-container input {
-            flex: 1;
-            padding: 12px 16px;
-            font-size: 13px;
-            border: 1px solid #00f0ff;
-            border-radius: 14px;
-            background-color: rgba(18, 18, 18, 0.95);
-            color: #fff;
-            outline: none;
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
-        }
-        .friend-search-container button {
-            padding: 12px 18px;
-            background-color: #00f0ff;
-            color: #000;
-            border: none;
-            border-radius: 14px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        /* Friend Search Results Box */
-        .friend-result-box {
-            width: 100%;
-            background: rgba(18, 18, 18, 0.95);
-            border: 1px solid #00f0ff;
-            border-radius: 12px;
-            padding: 10px 15px;
-            margin-bottom: 20px;
-            display: none;
-            justify-content: space-between;
-            align-items: center;
-            box-sizing: border-box;
-        }
-        .friend-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .friend-info img {
-            width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 1px solid #00f0ff;
-        }
-
-        /* YouTube Video Search Bar */
+        /* YouTube Video Search Bar with Neon Rainbow Box */
         .top-search-container {
             width: 100%;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             display: flex;
             gap: 8px;
         }
@@ -165,12 +73,12 @@
             flex: 1;
             padding: 14px 18px;
             font-size: 14px;
-            border: 1px solid #ff0000;
+            animation: neonRainbow 6s infinite;
+            border: 2px solid #ff0000;
             border-radius: 14px;
             background-color: rgba(18, 18, 18, 0.95);
             color: #fff;
             outline: none;
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
         }
         .top-search-container button {
             padding: 14px 22px;
@@ -184,7 +92,7 @@
         }
 
         h1 {
-            font-size: 26px;
+            font-size: 30px;
             font-weight: bold;
             margin-bottom: 2px;
             color: #ffffff;
@@ -196,18 +104,19 @@
         }
         p {
             color: #bbb;
-            font-size: 12px;
-            margin-bottom: 20px;
+            font-size: 13px;
+            margin-bottom: 25px;
         }
 
-        /* Video wrapper styling */
         .video-wrapper {
             position: relative;
             width: 100%;
             background: #111;
             border-radius: 16px;
             padding: 15px;
-            z-index: 1;
+            box-sizing: border-box;
+            animation: neonRainbow 6s infinite;
+            border: 2px solid #33cc33;
         }
 
         .video-box {
@@ -217,7 +126,6 @@
             border-radius: 10px;
             overflow: hidden;
             position: relative;
-            z-index: 2;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -246,6 +154,7 @@
             position: relative;
             z-index: 4;
         }
+
         .action-bar {
             display: flex;
             justify-content: space-between;
@@ -254,8 +163,6 @@
             padding: 0 5px;
             flex-wrap: wrap;
             gap: 10px;
-            position: relative;
-            z-index: 2;
         }
         .btn-custom {
             background: #1c1c1c;
@@ -276,150 +183,18 @@
             box-shadow: 0 0 10px #ff0000;
         }
 
-        /* Live Chat Room Section */
-        .chat-container {
-            width: 100%;
-            background: rgba(18, 18, 18, 0.95);
-            border: 1px solid #00f0ff;
-            border-radius: 16px;
-            padding: 15px;
-            box-shadow: 0 0 25px rgba(0, 240, 255, 0.25);
-            text-align: left;
-        }
-        .chat-header {
-            font-size: 15px;
-            font-weight: bold;
-            color: #ffffff;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #333;
-            padding-bottom: 8px;
-        }
-        .chat-messages {
-            height: 250px;
-            overflow-y: auto;
-            background: #0a0a0a;
-            border-radius: 10px;
-            padding: 10px;
-            margin-bottom: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .chat-message {
-            background: #1a1a1a;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 13px;
-            word-break: break-word;
-            border-left: 3px solid #ff0000;
-            cursor: pointer;
-        }
-        .chat-message .user {
-            color: #00f0ff;
-            font-weight: bold;
-            margin-right: 5px;
-        }
-        .chat-input-box {
-            display: flex;
-            gap: 8px;
-        }
-        .chat-input-box input {
-            flex: 1;
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid #444;
-            background: #121212;
-            color: #fff;
-            font-size: 13px;
-            outline: none;
-            width: auto;
-        }
-        .chat-input-box button {
-            padding: 12px 18px;
-            margin: 0;
-            background-color: #00f0ff;
-            color: #000;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        /* Bottom Navigation Bar (Home & Notifications at the very bottom) */
-        .bottom-nav-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(10, 10, 15, 0.95);
-            border-top: 1px solid #333;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            z-index: 200;
-            backdrop-filter: blur(10px);
-        }
-        .bottom-nav-btn {
-            background: #1c1c1c;
-            border: 1px solid #444;
-            color: #fff;
-            padding: 8px 22px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: bold;
-        }
-        .bottom-nav-btn.active {
-            background: #ff0000;
-            border-color: #ff0000;
-            box-shadow: 0 0 10px rgba(255,0,0,0.5);
-        }
-
-        /* Profile Card Styling */
-        .profile-card {
-            width: 100%;
-            background: rgba(18, 18, 18, 0.95);
-            border: 1px solid #ff0000;
-            border-radius: 16px;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        .profile-img-preview {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            border: 2px solid #00f0ff;
-            object-fit: cover;
-            margin-bottom: 12px;
-        }
-        .profile-input {
-            width: 100%;
-            padding: 10px;
-            margin-top: 8px;
-            margin-bottom: 12px;
-            border-radius: 8px;
-            border: 1px solid #444;
-            background: #121212;
-            color: #fff;
-            box-sizing: border-box;
-            outline: none;
-        }
-
-        /* Visitor Counter Badge */
         .visitor-counter {
-            margin-top: 30px;
+            margin-top: 35px;
             display: inline-flex;
             align-items: center;
             gap: 10px;
             background: rgba(18, 18, 18, 0.9);
-            border: 1px solid #00f0ff;
-            padding: 10px 20px;
+            animation: neonRainbow 6s infinite;
+            border: 2px solid #00f0ff;
+            padding: 10px 22px;
             border-radius: 30px;
             font-size: 14px;
             color: #fff;
-            margin-bottom: 20px;
         }
         .visitor-counter span {
             color: #00f0ff;
@@ -429,33 +204,13 @@
 </head>
 <body>
 
-    <!-- Top-Left Profile Button -->
-    <div class="profile-btn" onclick="switchPage('profilePage')">
-        <img id="topProfilePic" src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f464.png" alt="Profile">
-        <span id="topUsernameDisplay">Profile</span>
-    </div>
-
     <!-- Ping Indicator Top-Right -->
     <div class="ping-indicator" id="pingIndicator">
         <span id="pingIcon">📶</span>
         <span id="pingText" style="color: #00f0ff;">Online</span>
     </div>
 
-    <!-- HOME PAGE SECTION -->
-    <div id="homePage" class="page-section active">
-        <div class="friend-search-container">
-            <input type="text" id="friendSearchInput" placeholder="Search your friend (e.g. Ali123)...">
-            <button onclick="searchFriend()">Search</button>
-        </div>
-
-        <div class="friend-result-box" id="friendResultBox">
-            <div class="friend-info">
-                <img id="foundUserPic" src="" alt="PFP">
-                <span id="foundUserName" style="font-weight: bold; color: #00f0ff;"></span>
-            </div>
-            <button onclick="sendChatRequest()" style="background:#ff0000; color:#fff; border:none; padding:6px 12px; border-radius:8px; cursor:pointer; font-weight:bold;">📩 Request</button>
-        </div>
-
+    <div class="main-container">
         <div class="top-search-container">
             <input type="text" id="videoUrl" placeholder="YouTube video link ya ID search karein...">
             <button onclick="playVideoFromInput()">Search</button>
@@ -464,7 +219,7 @@
         <h1>Vynzo<span>-Tube</span></h1>
         <p>Smooth Cinematic Neon Experience</p>
 
-        <div class="video-wrapper" id="wrapper" style="display:none; width: 100%; max-width: 560px;">
+        <div class="video-wrapper" id="wrapper" style="display:none;">
             <div class="video-box" id="videoContainer">
                 <div class="loader" id="videoLoader"></div>
             </div>
@@ -487,106 +242,137 @@
         </div>
     </div>
 
-    <!-- CHAT ROOM PAGE SECTION -->
-    <div id="chatPage" class="page-section">
-        <div class="back-bar"><button onclick="switchPage('homePage')">⬅ Back</button></div>
-        <div class="chat-container">
-            <div class="chat-header">
-                <div style="display:flex; align-items:center; gap:6px; color:#00f0ff;">
-                    <span style="font-size: 18px;">🏠</span> Vynzo Chat Room
-                </div>
-                <span id="chatUsernameLabel" style="font-size: 12px; color: #bbb;"></span>
-            </div>
-            <div class="chat-messages" id="chatMessages">
-                <div style="color: #666; text-align: center; margin-top: 60px;">Pehla message aap bhejein!</div>
-            </div>
-            <div class="chat-input-box">
-                <input type="text" id="chatInput" placeholder="Message likhein..." onkeypress="checkEnter(event)">
-                <button onclick="sendMessage()">Bhejo</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- NOTIFICATIONS PAGE SECTION -->
-    <div id="notificationsPage" class="page-section">
-        <div class="back-bar"><button onclick="switchPage('homePage')">⬅ Back</button></div>
-        <div class="profile-card">
-            <h3 style="color:#00f0ff; margin-top:0;">Chat Requests (Notifications)</h3>
-            <div id="requestsList" style="font-size:13px; color:#bbb; text-align:left;">
-                Aapko abhi koi nayi request nahi mili.
-            </div>
-        </div>
-    </div>
-
-    <!-- PROFILE SETTINGS PAGE SECTION -->
-    <div id="profilePage" class="page-section">
-        <div class="back-bar"><button onclick="switchPage('homePage')">⬅ Back</button></div>
-        <div class="profile-card" style="text-align: left;">
-            <h3 style="color:#ff0000; margin-top:0; text-align:center;">Aapki Profile</h3>
-            <div style="text-align: center;">
-                <img id="profilePreviewImg" class="profile-img-preview" src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f464.png" alt="PFP">
-            </div>
-            
-            <label style="font-size:12px; color:#aaa; display:block; margin-bottom:3px;">Apna Unique Username Likhein:</label>
-            <input type="text" id="profileUsernameInput" class="profile-input" placeholder="e.g. Wardan99">
-
-            <label style="font-size:12px; color:#aaa; display:block; margin-bottom:3px;">Profile Picture Select Karein:</label>
-            <input type="file" id="pfpFileInput" accept="image/*" onchange="previewProfilePic(event)" style="font-size:12px; color:#fff; margin-bottom: 15px; display:block;">
-
-            <button onclick="saveProfileData()" style="width:100%; background:#ff0000; color:#fff; border:none; padding:12px; border-radius:10px; font-weight:bold; cursor:pointer;">Fast Save Profile</button>
-        </div>
-    </div>
-
-    <!-- Bottom Navigation Bar -->
-    <div class="bottom-nav-bar">
-        <button class="bottom-nav-btn active" id="navHome" onclick="switchPage('homePage')">🏠 Home</button>
-        <button class="bottom-nav-btn" id="navNotif" onclick="switchPage('notificationsPage')">🔔 Notifications</button>
-        <button class="bottom-nav-btn" id="navChat" onclick="switchPage('chatPage')">💬 Chat Room</button>
-    </div>
-
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyD_DummyKeyForDemoVynzoTube99",
-            authDomain: "vynzotube-chat.firebaseapp.com",
-            projectId: "vynzotube-chat",
-            storageBucket: "vynzotube-chat.appspot.com",
-            messagingSenderId: "1234567890",
-            appId: "1:1234567890:web:abcdef"
-        };
-        
-        let db = null;
-        try {
-            if (typeof firebase !== 'undefined') {
-                firebase.initializeApp(firebaseConfig);
-                db = firebase.firestore();
-            }
-        } catch (e) {
-            console.log("Firebase fallback active");
-        }
-
-        let username = localStorage.getItem('vynzo_permanent_username') || "";
-        let searchedTargetUser = "";
-        let tempPfpBase64 = "";
+        let currentVideoID = "";
+        let isLiked = false;
 
         window.onload = function() {
             try {
-                if (username) {
-                    let topName = document.getElementById("topUsernameDisplay");
-                    if(topName) topName.innerText = username;
-                    let chatLbl = document.getElementById("chatUsernameLabel");
-                    if(chatLbl) chatLbl.innerText = "👤 " + username;
-                    let profInput = document.getElementById("profileUsernameInput");
-                    if(profInput) profInput.value = username;
-                    
-                    let savedPfp = localStorage.getItem('vynzo_pfp_' + username);
-                    if (savedPfp) {
-                        let topPic = document.getElementById("topProfilePic");
-                        if(topPic) topPic.src = savedPfp;
-                        let prevImg = document.getElementById("profilePreviewImg");
-                        if(prevImg) prevImg.src = savedPfp;
-                        tempPfpBase64 = savedPfp;
-                    }
+                // Automatic URL Video Loader Check
+                const urlParams = new URLSearchParams(window.location.search);
+                let vParam = urlParams.get('v');
+                if (vParam) {
+                    playVideo(vParam);
+                    let vInput = document.getElementById("videoUrl");
+                    if(vInput) vInput.value = "https://youtu.be/" + vParam;
                 }
-                loadChatMessages();
-                loadNotifications();
-            } catch(
+
+                // Visitor Counter
+                let visits = parseInt(localStorage.getItem('vynzo_visit_count') || '1');
+                if (!sessionStorage.getItem('vynzo_counted')) {
+                    visits += 1;
+                    localStorage.setItem('vynzo_visit_count', visits);
+                    sessionStorage.setItem('vynzo_counted', 'true');
+                }
+                let visitSpan = document.getElementById("visitCount");
+                if(visitSpan) visitSpan.innerText = visits;
+
+                // Real Ping Checker
+                checkRealPing();
+                setInterval(checkRealPing, 5000);
+            } catch(e) {}
+        };
+
+        function checkRealPing() {
+            let pingText = document.getElementById("pingText");
+            let pingIcon = document.getElementById("pingIcon");
+            if (!pingText) return;
+
+            let startTime = Date.now();
+            fetch('https://www.google.com/favicon.ico', { mode: 'no-cors', cache: 'no-store' })
+            .then(() => {
+                let duration = Date.now() - startTime;
+                pingText.innerText = duration < 300 ? "Online (Fast)" : "Online (" + duration + "ms)";
+                pingText.style.color = "#00f0ff";
+                if(pingIcon) pingIcon.innerText = "📶";
+            })
+            .catch(() => {
+                if (navigator.onLine) {
+                    pingText.innerText = "Online";
+                    pingText.style.color = "#33cc33";
+                } else {
+                    pingText.innerText = "Offline";
+                    pingText.style.color = "#ff0000";
+                    if(pingIcon) pingIcon.innerText = "⚠️";
+                }
+            });
+        }
+
+        function extractVideoID(input) {
+            if (!input) return null;
+            let cleanInput = input.trim();
+            let regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+            let match = cleanInput.match(regExp);
+            if (match && match[1]) return match[1];
+            if (cleanInput.length === 11) return cleanInput;
+            return null;
+        }
+
+        function playVideoFromInput() {
+            let vInput = document.getElementById("videoUrl");
+            let inputVal = vInput ? vInput.value : "";
+            let videoID = extractVideoID(inputVal);
+            if (videoID) {
+                playVideo(videoID);
+                let newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?v=' + videoID;
+                window.history.pushState({path: newUrl}, '', newUrl);
+            } else {
+                alert("Ghalat link! Baraye meharbani theek YouTube link dalein.");
+            }
+        }
+
+        function playVideo(videoID) {
+            currentVideoID = videoID;
+            let wrapper = document.getElementById("wrapper");
+            let container = document.getElementById("videoContainer");
+            let loader = document.getElementById("videoLoader");
+            let downloadBtn = document.getElementById("downloadBtn");
+
+            if(wrapper) wrapper.style.display = "block";
+            if(downloadBtn) downloadBtn.href = `https://www.ssyoutube.com/watch?v=${videoID}`;
+            if(loader) loader.style.display = "block";
+
+            let iframe = document.createElement('iframe');
+            iframe.src = `https://www.youtube.com/embed/${videoID}?autoplay=1&rel=0&modestbranding=1`;
+            iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+            iframe.allowFullscreen = true;
+
+            iframe.onload = function() {
+                if(loader) loader.style.display = "none";
+            };
+
+            let oldIframe = container.querySelector('iframe');
+            if (oldIframe) oldIframe.remove();
+            if(container) container.appendChild(iframe);
+        }
+
+        function shareVideo() {
+            if (!currentVideoID) {
+                alert("Pehle koi video chalayein!");
+                return;
+            }
+            let shareableLink = window.location.protocol + "//" + window.location.host + window.location.pathname + '?v=' + currentVideoID;
+            navigator.clipboard.writeText(shareableLink).then(() => {
+                alert("Video ka shareable link copy ho gaya!");
+            });
+        }
+
+        function toggleLike() {
+            let btn = document.getElementById("likeBtn");
+            let countSpan = document.getElementById("likeCount");
+            if(!countSpan) return;
+            let count = parseInt(countSpan.innerText);
+            if (!isLiked) {
+                isLiked = true;
+                if(btn) btn.classList.add("liked");
+                countSpan.innerText = count + 1;
+            } else {
+                isLiked = false;
+                if(btn) btn.classList.remove("liked");
+                countSpan.innerText = count - 1;
+            }
+        }
+    </script>
+</body>
+    </html>
+    
