@@ -5,26 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vynzo-Tube</title>
     <style>
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        @keyframes neonPulse {
+            0% { box-shadow: 0 0 20px #ff0055, inset 0 0 20px #ff0055; background-color: #0a0008; }
+            50% { box-shadow: 0 0 40px #00ffff, inset 0 0 40px #00ffff; background-color: #00050f; }
+            100% { box-shadow: 0 0 20px #ff0055, inset 0 0 20px #ff0055; background-color: #0a0008; }
         }
         body {
-            background: linear-gradient(-45deg, #0f0f0f, #1a0000, #000000, #26001a);
-            background-size: 400% 400%;
-            animation: gradientBG 12s ease infinite;
+            background-color: #0a0008;
+            animation: neonPulse 10s infinite alternate;
             color: #ffffff;
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 0;
             padding: 20px;
             min-height: 100vh;
+            transition: background 1s ease;
         }
         h1 {
-            color: #ff0000;
+            color: #ff0055;
             margin-bottom: 5px;
-            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+            text-shadow: 0 0 15px rgba(255, 0, 85, 0.7);
         }
         p {
             color: #aaa;
@@ -39,38 +39,37 @@
             max-width: 400px;
             padding: 12px;
             font-size: 14px;
-            border: 1px solid #444;
+            border: 1px solid #ff0055;
             border-radius: 8px;
-            background-color: rgba(34, 34, 34, 0.8);
+            background-color: rgba(10, 0, 10, 0.8);
             color: #fff;
             outline: none;
-            backdrop-filter: blur(5px);
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.3);
         }
         button {
             padding: 12px 20px;
             font-size: 14px;
-            background-color: #ff0000;
+            background-color: #ff0055;
             color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
             margin-left: 5px;
-            box-shadow: 0 4px 10px rgba(255, 0, 0, 0.3);
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.5);
             transition: 0.2s;
         }
         button:hover {
-            background-color: #cc0000;
+            background-color: #cc0044;
         }
         .video-wrapper {
             width: 100%;
             max-width: 560px;
             margin: 0 auto;
-            background: rgba(20, 20, 20, 0.7);
+            background: rgba(15, 5, 20, 0.85);
             border-radius: 12px;
             padding: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .video-box {
@@ -88,13 +87,17 @@
             width: 100%;
             height: 100%;
             border: none;
+            position: absolute;
+            z-index: 1;
         }
+        /* Tap layers sirf side edges par rakhi hain taake beech ka YouTube play/pause button kharab na ho */
         .tap-layer {
             position: absolute;
-            top: 0;
-            width: 50%;
-            height: 100%;
-            z-index: 10;
+            top: 20%;
+            width: 25%;
+            height: 60%;
+            z-index: 5;
+            cursor: pointer;
         }
         .tap-left { left: 0; }
         .tap-right { right: 0; }
@@ -107,8 +110,8 @@
             padding: 0 5px;
         }
         .like-btn, .download-btn {
-            background: #2a2a2a;
-            border: 1px solid #444;
+            background: #1a001a;
+            border: 1px solid #ff0055;
             color: #fff;
             padding: 8px 16px;
             border-radius: 20px;
@@ -120,16 +123,18 @@
             transition: 0.2s;
         }
         .like-btn.liked {
-            background: #ff0000;
-            border-color: #ff0000;
+            background: #ff0055;
+            border-color: #ff0055;
+            box-shadow: 0 0 10px #ff0055;
         }
         .download-btn {
-            background: #0066cc;
-            border-color: #0055aa;
+            background: #0088ff;
+            border-color: #00ffff;
             text-decoration: none;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
         }
         .download-btn:hover {
-            background: #0055aa;
+            background: #0055cc;
         }
     </style>
 </head>
@@ -146,16 +151,17 @@
     <div class="video-wrapper" id="wrapper" style="display:none;">
         <div class="video-box">
             <div id="ytplayer"></div>
+            <!-- Double tap zones on extreme left and right sides only -->
             <div class="tap-layer tap-left" onclick="handleDoubleTap('left')"></div>
             <div class="tap-layer tap-right" onclick="handleDoubleTap('right')"></div>
         </div>
         
         <div class="action-bar">
             <button class="like-btn" id="likeBtn" onclick="toggleLike()">
-                👍 Like <span id="likeCount">0</span>
+                ♥️ Like <span id="likeCount">0</span>
             </button>
             <a id="downloadBtn" href="#" target="_blank" class="download-btn">
-                📥 Download Video
+                ⬇️ Download Video
             </a>
         </div>
     </div>
@@ -171,22 +177,15 @@
 
         function extractVideoID(input) {
             if (!input) return null;
-            // Agar user ne poora ganda link ya extra text paste kiya ho toh usko saaf karna
             let cleanInput = input.trim();
-            
-            // Regular expression jo YouTube ke kisi bhi format se 11-character ID nikal le
             let regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
             let match = cleanInput.match(regExp);
-            
             if (match && match[1]) {
                 return match[1];
             }
-            
-            // Agar seedha 11 character ki ID di ho
             if (cleanInput.length === 11) {
                 return cleanInput;
             }
-            
             return null;
         }
 
@@ -224,7 +223,8 @@
                 playerVars: {
                     'autoplay': 1,
                     'controls': 1,
-                    'rel': 0
+                    'rel': 0,
+                    'modestbranding': 1
                 }
             });
         }
