@@ -3,9 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vynzo-Tube</title>
+    <title>Vynzo-Tube Pro Ultimate</title>
+    
+    <!-- Firebase SDKs for Google Cloud Database -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
     <style>
-        /* Background Cinematic Neon Movement */
         @keyframes bgNeonMove {
             0% { background-position: 0% 0%; }
             50% { background-position: 100% 100%; }
@@ -13,7 +17,7 @@
         }
         body {
             margin: 0;
-            padding: 20px 20px 40px 20px;
+            padding: 20px 20px 80px 20px;
             min-height: 100vh;
             font-family: Arial, sans-serif;
             text-align: center;
@@ -28,7 +32,32 @@
             align-items: center;
         }
 
-        /* Free Fire Style Lobby Ping Indicator on Top-Right Corner */
+        /* Top-Left Profile Button */
+        .profile-btn {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            background: rgba(18, 18, 18, 0.85);
+            border: 1px solid #ff0000;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 100;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+        }
+        .profile-btn img {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Ping Indicator Top-Right */
         .ping-indicator {
             position: absolute;
             top: 15px;
@@ -44,72 +73,143 @@
             gap: 6px;
             z-index: 100;
         }
-        .ping-icon {
-            font-size: 16px;
+
+        /* Pages View Controller */
+        .page-section {
+            width: 100%;
+            max-width: 560px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+        .page-section.active {
+            display: flex;
         }
 
-        /* Vynzo-Tube Text with Red Neon Glow */
-        h1 {
-            font-size: 32px;
-            font-weight: bold;
-            margin-top: 15px;
-            margin-bottom: 5px;
-            color: #ffffff;
-            text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000;
-        }
-        h1 span {
-            color: #ff0000;
-            text-shadow: 0 0 15px #ff0000, 0 0 30px #ff0000;
-        }
-        p {
-            color: #bbb;
-            font-size: 14px;
-            margin-bottom: 25px;
-        }
-        .input-container {
-            margin-bottom: 25px;
+        /* Universal Back Bar */
+        .back-bar {
             width: 100%;
+            text-align: left;
+            margin-bottom: 12px;
         }
-        input[type="text"] {
-            width: 80%;
-            max-width: 400px;
-            padding: 14px;
-            font-size: 14px;
-            border: 1px solid #444;
-            border-radius: 12px;
-            background-color: #121212;
+        .back-bar button {
+            background: #222;
+            border: 1px solid #666;
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        /* Top-Most Search Bar: Search Your Friend */
+        .friend-search-container {
+            width: 100%;
+            margin-top: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 8px;
+        }
+        .friend-search-container input {
+            flex: 1;
+            padding: 12px 16px;
+            font-size: 13px;
+            border: 1px solid #00f0ff;
+            border-radius: 14px;
+            background-color: rgba(18, 18, 18, 0.95);
             color: #fff;
             outline: none;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
         }
-        button {
-            padding: 14px 22px;
+        .friend-search-container button {
+            padding: 12px 18px;
+            background-color: #00f0ff;
+            color: #000;
+            border: none;
+            border-radius: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Friend Search Results Box */
+        .friend-result-box {
+            width: 100%;
+            background: rgba(18, 18, 18, 0.95);
+            border: 1px solid #00f0ff;
+            border-radius: 12px;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+        }
+        .friend-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .friend-info img {
+            width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 1px solid #00f0ff;
+        }
+
+        /* YouTube Video Search Bar */
+        .top-search-container {
+            width: 100%;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 8px;
+        }
+        .top-search-container input {
+            flex: 1;
+            padding: 14px 18px;
             font-size: 14px;
+            border: 1px solid #ff0000;
+            border-radius: 14px;
+            background-color: rgba(18, 18, 18, 0.95);
+            color: #fff;
+            outline: none;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+        }
+        .top-search-container button {
+            padding: 14px 22px;
             background-color: #ff0000;
             color: white;
             border: none;
-            border-radius: 12px;
-            cursor: pointer;
+            border-radius: 14px;
             font-weight: bold;
-            margin-left: 5px;
-            transition: 0.2s;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
         }
-        button:hover {
-            background-color: #cc0000;
+
+        h1 {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 2px;
+            color: #ffffff;
+            text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+        }
+        h1 span {
+            color: #ff0000;
+            text-shadow: 0 0 15px #ff0000;
+        }
+        p {
+            color: #bbb;
+            font-size: 12px;
+            margin-bottom: 20px;
         }
 
         /* Video wrapper styling */
         .video-wrapper {
             position: relative;
             width: 100%;
-            max-width: 560px;
-            margin: 0 auto;
             background: #111;
             border-radius: 16px;
             padding: 15px;
             z-index: 1;
         }
 
-        /* True Car-Style Rainbow Border Beam Loop */
         .video-wrapper::before {
             content: '';
             position: absolute;
@@ -140,7 +240,6 @@
             justify-content: center;
         }
 
-        /* Loading Spinner inside video box */
         .loader {
             position: absolute;
             width: 45px;
@@ -199,221 +298,302 @@
             box-shadow: 0 0 10px #ff0000;
         }
 
-        /* Visitor Counter Badge at the absolute bottom */
+        /* Live Chat Room Section */
+        .chat-container {
+            width: 100%;
+            background: rgba(18, 18, 18, 0.95);
+            border: 1px solid #00f0ff;
+            border-radius: 16px;
+            padding: 15px;
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.25);
+            text-align: left;
+        }
+        .chat-header {
+            font-size: 15px;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            padding-bottom: 8px;
+        }
+        .chat-messages {
+            height: 250px;
+            overflow-y: auto;
+            background: #0a0a0a;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .chat-message {
+            background: #1a1a1a;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            word-break: break-word;
+            border-left: 3px solid #ff0000;
+            cursor: pointer;
+        }
+        .chat-message .user {
+            color: #00f0ff;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .chat-input-box {
+            display: flex;
+            gap: 8px;
+        }
+        .chat-input-box input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #444;
+            background: #121212;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+            width: auto;
+        }
+        .chat-input-box button {
+            padding: 12px 18px;
+            margin: 0;
+            background-color: #00f0ff;
+            color: #000;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Bottom Navigation Bar (Home & Notifications at the very bottom) */
+        .bottom-nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 10, 15, 0.95);
+            border-top: 1px solid #333;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 200;
+            backdrop-filter: blur(10px);
+        }
+        .bottom-nav-btn {
+            background: #1c1c1c;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 8px 22px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .bottom-nav-btn.active, .bottom-nav-btn:hover {
+            background: #ff0000;
+            border-color: #ff0000;
+            box-shadow: 0 0 10px rgba(255,0,0,0.5);
+        }
+
+        /* Profile Card Styling */
+        .profile-card {
+            width: 100%;
+            background: rgba(18, 18, 18, 0.95);
+            border: 1px solid #ff0000;
+            border-radius: 16px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .profile-img-preview {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 2px solid #00f0ff;
+            object-fit: cover;
+            margin-bottom: 12px;
+        }
+
+        /* Mandatory Username Modal Popup */
+        #usernameModal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.92);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-box {
+            background: #121212;
+            border: 2px solid #ff0000;
+            padding: 25px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 380px;
+            box-shadow: 0 0 30px rgba(255,0,0,0.4);
+            text-align: center;
+        }
+        .modal-box input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 10px;
+            border: 1px solid #444;
+            background: #1a1a1a;
+            color: #fff;
+            box-sizing: border-box;
+            outline: none;
+        }
+        .error-msg {
+            color: #ff3333;
+            font-size: 12px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        /* Visitor Counter Badge */
         .visitor-counter {
-            margin-top: auto;
-            margin-top: 40px;
+            margin-top: 30px;
             display: inline-flex;
             align-items: center;
             gap: 10px;
             background: rgba(18, 18, 18, 0.9);
             border: 1px solid #00f0ff;
-            padding: 12px 24px;
+            padding: 10px 20px;
             border-radius: 30px;
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.25);
             font-size: 14px;
             color: #fff;
+            margin-bottom: 20px;
         }
         .visitor-counter span {
             color: #00f0ff;
             font-weight: bold;
-            font-size: 16px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Free Fire Style Lobby Ping Indicator -->
+    <!-- Mandatory Username Modal -->
+    <div id="usernameModal">
+        <div class="modal-box">
+            <h3 style="color: #ff0000; margin-top:0;">Vynzo-Tube Setup</h3>
+            <p style="font-size: 12px; color: #ccc;">Website shuru karne ke liye apna Unique Username darj karein. (Must include letters & numbers, no stylish fonts!)</p>
+            <input type="text" id="modalUsernameInput" placeholder="e.g. Wardan99">
+            <div class="error-msg" id="usernameError">Ghalat format! Username mein letters aur numbers dono hone lazmi hain aur koi stylish font nahi chalega.</div>
+            <button onclick="saveInitialUsername()" style="margin-top: 15px; width: 100%; background: #ff0000; color:#fff; border:none; padding:12px; border-radius:10px; font-weight:bold; cursor:pointer;">Save & Start</button>
+        </div>
+    </div>
+
+    <!-- Top-Left Profile Button -->
+    <div class="profile-btn" onclick="switchPage('profilePage')">
+        <img id="topProfilePic" src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f464.png" alt="Profile">
+        <span id="topUsernameDisplay">Profile</span>
+    </div>
+
+    <!-- Ping Indicator Top-Right -->
     <div class="ping-indicator" id="pingIndicator">
-        <span class="ping-icon" id="pingIcon">📶</span>
+        <span id="pingIcon">📶</span>
         <span id="pingText" style="color: #ffffff;">Checking...</span>
     </div>
 
-    <h1>Vynzo<span>-Tube</span></h1>
-    <p>Smooth Cinematic Neon Experience</p>
-
-    <div class="input-container">
-        <input type="text" id="videoUrl" placeholder="YouTube ka link yahan paste karein...">
-        <button onclick="playVideoFromInput()">Video Chalayein</button>
-    </div>
-
-    <div class="video-wrapper" id="wrapper" style="display:none;">
-        <div class="video-box" id="videoContainer">
-            <div class="loader" id="videoLoader"></div>
+    <!-- HOME PAGE SECTION -->
+    <div id="homePage" class="page-section active">
+        <!-- Sabse Upar: Search Your Friend Bar -->
+        <div class="friend-search-container">
+            <input type="text" id="friendSearchInput" placeholder="Search your friend (e.g. Ali123)...">
+            <button onclick="searchFriend()">Search</button>
         </div>
-        
-        <div class="action-bar">
-            <button class="btn-custom like-btn" id="likeBtn" onclick="toggleLike()">
-                ❤️ Like <span id="likeCount">0</span>
-            </button>
-            <button class="btn-custom" onclick="shareVideo()">
-                🔗 Share / Copy Link
-            </button>
-            <a id="downloadBtn" href="#" target="_blank" class="btn-custom">
-                📥 Download
-            </a>
+
+        <!-- Friend Search Result Box with 📩 icon -->
+        <div class="friend-result-box" id="friendResultBox">
+            <div class="friend-info">
+                <img id="foundUserPic" src="" alt="PFP">
+                <span id="foundUserName" style="font-weight: bold; color: #00f0ff;"></span>
+            </div>
+            <button onclick="sendChatRequest()" style="background:#ff0000; color:#fff; border:none; padding:6px 12px; border-radius:8px; cursor:pointer; font-weight:bold;">📩 Request</button>
+        </div>
+
+        <!-- Uss se neeche: YouTube Video Search Bar -->
+        <div class="top-search-container">
+            <input type="text" id="videoUrl" placeholder="YouTube video link ya ID search karein...">
+            <button onclick="playVideoFromInput()">Search</button>
+        </div>
+
+        <h1>Vynzo<span>-Tube</span></h1>
+        <p>Smooth Cinematic Neon Experience</p>
+
+        <div class="video-wrapper" id="wrapper" style="display:none; width: 100%; max-width: 560px;">
+            <div class="video-box" id="videoContainer">
+                <div class="loader" id="videoLoader"></div>
+            </div>
+            
+            <div class="action-bar">
+                <button class="btn-custom like-btn" id="likeBtn" onclick="toggleLike()">
+                    ❤️ Like <span id="likeCount">0</span>
+                </button>
+                <button class="btn-custom" onclick="shareVideo()">
+                    🔗 Share / Copy Link
+                </button>
+                <a id="downloadBtn" href="#" target="_blank" class="btn-custom">
+                    ⬇️ Download
+                </a>
+            </div>
+        </div>
+
+        <!-- Live Visitor Counter Badge -->
+        <div class="visitor-counter">
+            🎭 Total Visitors: <span id="visitCount">1</span>
         </div>
     </div>
 
-    <!-- Live Visitor Counter Badge at the very bottom -->
-    <div class="visitor-counter">
-        🎭 Total Visitors: <span id="visitCount">1</span>
+    <!-- CHAT ROOM PAGE SECTION -->
+    <div id="chatPage" class="page-section">
+        <div class="back-bar"><button onclick="switchPage('homePage')">⬅ Back</button></div>
+        <div class="chat-container">
+            <div class="chat-header">
+                <div style="display:flex; align-items:center; gap:6px; color:#00f0ff;">
+                    <span style="font-size: 18px;">🏠</span> Vynzo Chat Room
+                </div>
+                <span id="chatUsernameLabel" style="font-size: 12px; color: #bbb;"></span>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div style="color: #666; text-align: center; margin-top: 60px;">Chat load ho rahi hai...</div>
+            </div>
+            <div class="chat-input-box">
+                <input type="text" id="chatInput" placeholder="Message likhein (Long-press for Edit/Delete)..." onkeypress="checkEnter(event)">
+                <button onclick="sendMessage()">Bhejo</button>
+            </div>
+        </div>
     </div>
 
-    <script>
-        let isLiked = false;
-        let currentVideoID = "";
+    <!-- NOTIFICATIONS PAGE SECTION -->
+    <div id="notificationsPage" class="page-section">
+        <div class="back-bar"><button onclick="switchPage('homePage')">⬅ Back</button></div>
+        <div class="profile-card">
+            <h3 style="color:#00f0ff; margin-top:0;">Chat Requests (Notifications)</h3>
+            <div id="requestsList" style="font-size:13px; color:#bbb; text-align:left;">
+                Aapko abhi koi nayi request nahi mili.
+            </div>
+        </div>
+    </div>
 
-        window.onload = function() {
-            // Check Network Ping continuously
-            checkNetworkSpeed();
-            setInterval(checkNetworkSpeed, 4000);
+    <!-- PROFILE SETTINGS PAGE SECTION -->
+    <div id="profilePage" class="page-section">
+        <div class="back-bar"><button onclick="switchPage('homePage')">⬅ Back</button></div>
+        <div class="profile-card">
+            <h3 style="color:#ff0000; margin-top:0;">Aapki Profile</h3>
+            <img id="profilePreviewImg" class="profile-img-preview" src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f464.png" alt="PFP">
+            <div style="margin-bottom: 15px;">
+                <label style="font-size:12px; color:#aaa; display:block; margin-bottom:5px;">Gallery se Profile Picture select karein:</label>
+                <input type="file" id="pfpFileInput" accept="image/*" onchange="uploadProfilePic(event)" style="font-size:12px; color:#fff;">
+            </div>
+            <div style="font-size: 14px; color:#00f0ff; font-weight:bold;" id="profileUsernameDisplay">Username: </div>
+        </div>
+    </div>
 
-            // Check URL for shared video
-            const urlParams = new URLSearchParams(window.location.search);
-            const sharedID = urlParams.get('v');
-            if (sharedID) {
-                document.getElementById("videoUrl").value = sharedID;
-                playVideo(sharedID);
-            }
-
-            // Real Live Visitor Counter
-            fetch('https://api.counterapi.dev/v1/vynzotube/visits/up')
-                .then(response => response.json())
-                .then(data => {
-                    if (data && data.count !== undefined) {
-                        document.getElementById("visitCount").innerText = data.count;
-                    }
-                })
-                .catch(() => {
-                    let localVisits = localStorage.getItem('vynzo_visits');
-                    if (!localVisits) { localVisits = 1; } 
-                    else { localVisits = parseInt(localVisits) + 1; }
-                    localStorage.setItem('vynzo_visits', localVisits);
-                    document.getElementById("visitCount").innerText = localVisits;
-                });
-        };
-
-        // Network Speed / Ping Checker (Free Fire Lobby Style)
-        function checkNetworkSpeed() {
-            const pText = document.getElementById("pingText");
-            const pIcon = document.getElementById("pingIcon");
-
-            if (!navigator.onLine) {
-                pText.innerText = "Offline";
-                pText.style.color = "#ff0000";
-                return;
-            }
-
-            let startTime = new Date().getTime();
-            // Ping test using a tiny image request
-            fetch('https://www.google.com/favicon.ico?_=' + startTime, { mode: 'no-cors' })
-                .then(() => {
-                    let duration = new Date().getTime() - startTime;
-                    if (duration < 250) {
-                        pText.innerText = "Fast (" + duration + "ms)";
-                        pText.style.color = "#ffffff"; // White for smooth/fast
-                    } else if (duration < 600) {
-                        pText.innerText = "Normal (" + duration + "ms)";
-                        pText.style.color = "#ffff00"; // Yellow for moderate/normal
-                    } else {
-                        pText.innerText = "Slow (" + duration + "ms)";
-                        pText.style.color = "#ff0000"; // Red for slow
-                    }
-                })
-                .catch(() => {
-                    pText.innerText = "Poor Net";
-                    pText.style.color = "#ff0000"; // Red if request fails
-                });
-        }
-
-        function extractVideoID(input) {
-            if (!input) return null;
-            let cleanInput = input.trim();
-            let regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
-            let match = cleanInput.match(regExp);
-            if (match && match[1]) return match[1];
-            if (cleanInput.length === 11) return cleanInput;
-            return null;
-        }
-
-        function playVideoFromInput() {
-            let inputVal = document.getElementById("videoUrl").value;
-            let videoID = extractVideoID(inputVal);
-            if (videoID) {
-                window.history.pushState({}, '', `?v=${videoID}`);
-                playVideo(videoID);
-            } else {
-                alert("Ghalat link! Baraye meharbani theek YouTube link dalein.");
-            }
-        }
-
-        function playVideo(videoID) {
-            currentVideoID = videoID;
-            let wrapper = document.getElementById("wrapper");
-            let container = document.getElementById("videoContainer");
-            let loader = document.getElementById("videoLoader");
-            let downloadBtn = document.getElementById("downloadBtn");
-
-            wrapper.style.display = "block";
-            downloadBtn.href = `https://www.ssyoutube.com/watch?v=${videoID}`;
-            
-            // Show loader while video iframe loads
-            loader.style.display = "block";
-
-            // Create iframe
-            let iframe = document.createElement('iframe');
-            iframe.src = `https://www.youtube.com/embed/${videoID}?autoplay=1&rel=0&modestbranding=1`;
-            iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-            iframe.allowFullscreen = true;
-
-            iframe.onload = function() {
-                loader.style.display = "none"; // Hide loader when video loads successfully
-            };
-
-            // Clear previous iframe if any and append new one with loader
-            let oldIframe = container.querySelector('iframe');
-            if (oldIframe) oldIframe.remove();
-            container.appendChild(iframe);
-        }
-
-        function shareVideo() {
-            if (!currentVideoID) {
-                alert("Pehle koi video chalayein!");
-                return;
-            }
-            let shareableLink = window.location.href;
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Vynzo-Tube Video',
-                    text: 'Yeh video Vynzo-Tube par dekhein:',
-                    url: shareableLink,
-                }).catch(() => {});
-            } else {
-                navigator.clipboard.writeText(shareableLink).then(() => {
-                    alert("Link copy ho gaya! Ab aap ise kisi ko bhi share kar sakte hain.");
-                });
-            }
-        }
-
-        function toggleLike() {
-            let btn = document.getElementById("likeBtn");
-            let countSpan = document.getElementById("likeCount");
-            let count = parseInt(countSpan.innerText);
-
-            if (!isLiked) {
-                isLiked = true;
-                btn.classList.add("liked");
-                countSpan.innerText = count + 1;
-            } else {
-                isLiked = false;
-                btn.classList.remove("liked");
-                countSpan.innerText = count - 1;
-            }
-        }
-    </script>
-
-</body>
-    </html>
-    
+    <!-- Bottom Navigation Bar (Home & Notifications at the very botto
