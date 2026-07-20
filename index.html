@@ -1,10 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html lang="ur">
 <head>
-    <title>Vynzo Tube</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vynzo-Tube</title>
+    <style>
+        body {
+            background-color: #0f0f0f;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #ff0000;
+            margin-bottom: 5px;
+        }
+        p {
+            color: #aaa;
+            font-size: 14px;
+        }
+        .container {
+            margin-top: 30px;
+        }
+        input {
+            width: 80%;
+            max-width: 400px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background-color: #222;
+            color: #fff;
+            outline: none;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #cc0000;
+        }
+        .video-box {
+            margin-top: 25px;
+        }
+        iframe {
+            width: 100%;
+            max-width: 560px;
+            height: 315px;
+            border-radius: 10px;
+            border: none;
+        }
+    </style>
 </head>
-<body style="background:#000; color:#fff; text-align:center; padding-top:50px;">
-    <h1>Vynzo Tube</h1>
-    <p>Agar ye dikh raha hai, toh code sahi hai aur masla server/settings ka hai.</p>
+<body>
+
+    <h1>Vynzo-Tube</h1>
+    <p>Apni pasand ki video yahan dekhein</p>
+
+    <div class="container">
+        <input type="text" id="videoInput" placeholder="YouTube Video ID yahan paste karein">
+        <br>
+        <button onclick="playVideo()">Video Chalayein</button>
+    </div>
+
+    <div class="video-box" id="videoContainer">
+        <!-- Video yahan load hogi -->
+    </div>
+
+    <script>
+        function playVideo() {
+            let input = document.getElementById("videoInput").value.trim();
+            let container = document.getElementById("videoContainer");
+            
+            if (input !== "") {
+                container.innerHTML = `<iframe src="https://www.youtube.com/embed/${input}" allowfullscreen></iframe>`;
+            } else {
+                alert("Pehle sahi ID dalein!");
+            }
+        }
+    </script>
+
 </body>
-</html> 
+    </html>
+    
