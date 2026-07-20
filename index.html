@@ -417,43 +417,17 @@
             object-fit: cover;
             margin-bottom: 12px;
         }
-
-        /* Mandatory Username Modal Popup */
-        #usernameModal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.92);
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-box {
-            background: #121212;
-            border: 2px solid #ff0000;
-            padding: 25px;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 380px;
-            box-shadow: 0 0 30px rgba(255,0,0,0.4);
-            text-align: center;
-        }
-        .modal-box input {
+        .profile-input {
             width: 100%;
-            padding: 12px;
-            margin-top: 15px;
-            border-radius: 10px;
+            padding: 10px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+            border-radius: 8px;
             border: 1px solid #444;
-            background: #1a1a1a;
+            background: #121212;
             color: #fff;
             box-sizing: border-box;
             outline: none;
-        }
-        .error-msg {
-            color: #ff3333;
-            font-size: 12px;
-            margin-top: 8px;
-            display: none;
         }
 
         /* Visitor Counter Badge */
@@ -477,17 +451,6 @@
     </style>
 </head>
 <body>
-
-    <!-- Mandatory Username Modal -->
-    <div id="usernameModal">
-        <div class="modal-box">
-            <h3 style="color: #ff0000; margin-top:0;">Vynzo-Tube Setup</h3>
-            <p style="font-size: 12px; color: #ccc;">Website shuru karne ke liye apna Unique Username darj karein.</p>
-            <input type="text" id="modalUsernameInput" placeholder="e.g. Wardan99">
-            <div class="error-msg" id="usernameError">Baraye meharbani apna username likhein!</div>
-            <button onclick="saveInitialUsername()" style="margin-top: 15px; width: 100%; background: #ff0000; color:#fff; border:none; padding:12px; border-radius:10px; font-weight:bold; cursor:pointer;">Save & Start</button>
-        </div>
-    </div>
 
     <!-- Top-Left Profile Button -->
     <div class="profile-btn" onclick="switchPage('profilePage')">
@@ -585,17 +548,51 @@
     <!-- PROFILE SETTINGS PAGE SECTION -->
     <div id="profilePage" class="page-section">
         <div class="back-bar"><button onclick="switchPage('homePage')">⬅ Back</button></div>
-        <div class="profile-card">
-            <h3 style="color:#ff0000; margin-top:0;">Aapki Profile</h3>
-            <img id="profilePreviewImg" class="profile-img-preview" src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f464.png" alt="PFP">
-            <div style="margin-bottom: 15px;">
-                <label style="font-size:12px; color:#aaa; display:block; margin-bottom:5px;">Gallery se Profile Picture select karein:</label>
-                <input type="file" id="pfpFileInput" accept="image/*" onchange="uploadProfilePic(event)" style="font-size:12px; color:#fff;">
+        <div class="profile-card" style="text-align: left;">
+            <h3 style="color:#ff0000; margin-top:0; text-align:center;">Aapki Profile</h3>
+            <div style="text-align: center;">
+                <img id="profilePreviewImg" class="profile-img-preview" src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f464.png" alt="PFP">
             </div>
-            <div style="font-size: 14px; color:#00f0ff; font-weight:bold;" id="profileUsernameDisplay">Username: </div>
+            
+            <label style="font-size:12px; color:#aaa; display:block; margin-bottom:3px;">Apna Unique Username Likhein:</label>
+            <input type="text" id="profileUsernameInput" class="profile-input" placeholder="e.g. Wardan99">
+
+            <label style="font-size:12px; color:#aaa; display:block; margin-bottom:3px;">Profile Picture Select Karein:</label>
+            <input type="file" id="pfpFileInput" accept="image/*" onchange="previewProfilePic(event)" style="font-size:12px; color:#fff; margin-bottom: 15px; display:block;">
+
+            <button onclick="saveProfileData()" style="width:100%; background:#ff0000; color:#fff; border:none; padding:12px; border-radius:10px; font-weight:bold; cursor:pointer;">Fast Save Profile</button>
         </div>
     </div>
 
     <!-- Bottom Navigation Bar (Home & Notifications at the very bottom) -->
     <div class="bottom-nav-bar">
-        <button class="bottom-nav-btn active" onclick="switchPage('homePage')
+        <button class="bottom-nav-btn active" onclick="switchPage('homePage')">🏠 Home</button>
+        <button class="bottom-nav-btn" onclick="switchPage('notificationsPage')">🔔 Notifications</button>
+        <button class="bottom-nav-btn" onclick="switchPage('chatPage')">💬 Chat Room</button>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_DummyKeyForDemoVynzoTube99",
+            authDomain: "vynzotube-chat.firebaseapp.com",
+            projectId: "vynzotube-chat",
+            storageBucket: "vynzotube-chat.appspot.com",
+            messagingSenderId: "1234567890",
+            appId: "1:1234567890:web:abcdef"
+        };
+        
+        let db;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+        } catch (e) {
+            console.log("Firebase initialized");
+        }
+
+        let username = localStorage.getItem('vynzo_permanent_username') || "";
+        let searchedTargetUser = "";
+        let tempPfpBase64 = "";
+
+        window.onload = function() {
+            if (username) {
+                document.getElementById("topUsernameDispl
