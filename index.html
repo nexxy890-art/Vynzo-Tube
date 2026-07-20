@@ -191,20 +191,20 @@
         
         <div class="action-bar">
             <button class="btn-custom like-btn" id="likeBtn" onclick="toggleLike()">
-                ♥️ Like <span id="likeCount">0</span>
+                👍 Like <span id="likeCount">0</span>
             </button>
             <button class="btn-custom" onclick="shareVideo()">
                 🔗 Share / Copy Link
             </button>
             <a id="downloadBtn" href="#" target="_blank" class="btn-custom">
-                ⬇️ Download
+                📥 Download
             </a>
         </div>
     </div>
 
-    <!-- Live Visitor Counter Badge at the very bottom with unique 🎭 style -->
+    <!-- Live Visitor Counter Badge with 🎭 style -->
     <div class="visitor-counter">
-        🎭 Total Visitors: <span id="visitCount">Loading...</span>
+        🎭 Total Visitors: <span id="visitCount">1</span>
     </div>
 
     <script>
@@ -220,14 +220,24 @@
                 playVideo(sharedID);
             }
 
-            // Fetch Live Visitor Count safely
-            fetch('https://api.countapi.xyz/hit/vynzotube-site/visits')
+            // Real Live Visitor Counter using reliable API
+            fetch('https://api.counterapi.dev/v1/vynzotube/visits/up')
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById("visitCount").innerText = data.value;
+                    if (data && data.count !== undefined) {
+                        document.getElementById("visitCount").innerText = data.count;
+                    }
                 })
                 .catch(() => {
-                    document.getElementById("visitCount").innerText = "1,450+";
+                    // Local fallback so it starts fresh instead of fake high numbers
+                    let localVisits = localStorage.getItem('vynzo_visits');
+                    if (!localVisits) {
+                        localVisits = 1;
+                    } else {
+                        localVisits = parseInt(localVisits) + 1;
+                    }
+                    localStorage.setItem('vynzo_visits', localVisits);
+                    document.getElementById("visitCount").innerText = localVisits;
                 });
         };
 
@@ -294,6 +304,8 @@
             let countSpan = document.getElementById("likeCount");
             let count = parseInt(countSpan.innerText);
 
+            if (!is_liked) { // handled via isLiked
+            }
             if (!isLiked) {
                 isLiked = true;
                 btn.classList.add("liked");
@@ -307,5 +319,4 @@
     </script>
 
 </body>
-                            </html>
-            
+</html>
