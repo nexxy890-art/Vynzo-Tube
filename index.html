@@ -5,10 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vynzo-Tube</title>
 
-    <!-- Firebase SDKs for Real-time Cloud Database -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
     <style>
         @keyframes neonRainbow {
             0% { border-color: #ff0000; box-shadow: 0 0 15px #ff0000; }
@@ -41,7 +37,7 @@
             box-sizing: border-box;
         }
 
-        /* Ping Indicator Top-Right (Free Fire Style Numbers) */
+        /* Ping Indicator Top-Right */
         .ping-indicator {
             position: absolute;
             top: 15px;
@@ -187,96 +183,8 @@
             box-shadow: 0 0 10px #ff0000;
         }
 
-        /* Permanent User & Comment Section Box */
-        .comments-section {
-            width: 100%;
-            margin-top: 25px;
-            background: rgba(18, 18, 18, 0.95);
-            animation: neonRainbow 6s infinite;
-            border: 2px solid #00f0ff;
-            border-radius: 16px;
-            padding: 15px;
-            box-sizing: border-box;
-            text-align: left;
-        }
-        .comments-section h3 {
-            margin-top: 0;
-            font-size: 16px;
-            color: #00f0ff;
-            border-bottom: 1px solid #333;
-            padding-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .user-tag-box {
-            background: #121212;
-            border: 1px solid #444;
-            padding: 8px 12px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .user-tag-box input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: #00f0ff;
-            font-weight: bold;
-            font-size: 13px;
-            outline: none;
-        }
-        .comment-input-box {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-        .comment-input-box textarea {
-            padding: 10px 12px;
-            background: #121212;
-            border: 1px solid #444;
-            color: #fff;
-            border-radius: 8px;
-            font-size: 13px;
-            outline: none;
-            font-family: Arial, sans-serif;
-            resize: none;
-            height: 50px;
-        }
-        .comment-input-box button {
-            background: #00f0ff;
-            color: #000;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .comments-list {
-            max-height: 200px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .comment-item {
-            background: #111;
-            padding: 8px 12px;
-            border-radius: 8px;
-            border-left: 3px solid #ff0000;
-            font-size: 13px;
-        }
-        .comment-user {
-            color: #00f0ff;
-            font-weight: bold;
-            margin-right: 6px;
-        }
-
         .visitor-counter {
-            margin-top: 30px;
+            margin-top: 25px;
             display: inline-flex;
             align-items: center;
             gap: 10px;
@@ -292,6 +200,99 @@
             color: #00f0ff;
             font-weight: bold;
         }
+
+        /* Play Store Style Rating & Review Section */
+        .rating-section {
+            margin-top: 25px;
+            width: 100%;
+            background: rgba(18, 18, 18, 0.95);
+            animation: neonRainbow 6s infinite;
+            border: 2px solid #ff9900;
+            padding: 15px;
+            border-radius: 16px;
+            box-sizing: border-box;
+            text-align: left;
+        }
+        .rating-section h4 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            color: #ff9900;
+            text-align: center;
+        }
+        .stars-container {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            font-size: 28px;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+        .star {
+            color: #222;
+            -webkit-text-stroke: 1px #777;
+            transition: transform 0.2s;
+        }
+        .star.active {
+            color: #ffcc00;
+            -webkit-text-stroke: 1px #cca300;
+            text-shadow: 0 0 10px #ffcc00;
+            transform: scale(1.1);
+        }
+        .review-input-box {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .review-input-box input, .review-input-box textarea {
+            padding: 10px 12px;
+            background: #121212;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            font-family: Arial, sans-serif;
+        }
+        .review-input-box textarea {
+            resize: none;
+            height: 50px;
+        }
+        .review-input-box button {
+            background: #ff9900;
+            color: #000;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .reviews-list {
+            max-height: 180px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            border-top: 1px solid #333;
+            padding-top: 10px;
+        }
+        .review-item {
+            background: #111;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border-left: 3px solid #ff9900;
+            font-size: 13px;
+        }
+        .review-user {
+            color: #ff9900;
+            font-weight: bold;
+            margin-right: 6px;
+        }
+        .review-stars {
+            color: #ffcc00;
+            font-size: 12px;
+            margin-bottom: 3px;
+        }
     </style>
 </head>
 <body>
@@ -299,7 +300,7 @@
     <!-- Ping Indicator Top-Right -->
     <div class="ping-indicator" id="pingIndicator">
         <span id="pingIcon">📶</span>
-        <span id="pingText" style="color: #ffffff;">45ms</span>
+        <span id="pingText" style="color: #ffffff;">-- ms</span>
     </div>
 
     <div class="main-container">
@@ -323,68 +324,48 @@
                 <button class="btn-custom" onclick="shareVideo()">
                     🔗 Share Link
                 </button>
-                <a id="downloadBtn" href="#" target="_blank" class="btn-custom">
+                <button class="btn-custom" onclick="downloadVideo()">
                     📥 Download
-                </a>
-            </div>
-
-            <!-- Permanent Username & Comment Section -->
-            <div class="comments-section">
-                <h3>
-                    <span>💬 Comments (<span id="commentCount">0</span>)</span>
-                    <span style="font-size: 11px; color: #aaa; font-weight: normal;">Live Cloud Sync</span>
-                </h3>
-
-                <!-- Permanent Username Bar -->
-                <div class="user-tag-box">
-                    <span style="font-size: 12px; color: #888;">👤 Naam:</span>
-                    <input type="text" id="permanentUsername" placeholder="Apna permanent naam likhein..." oninput="savePermanentUsername()">
-                </div>
-
-                <div class="comment-input-box">
-                    <textarea id="commentText" placeholder="Apna comment likhein..."></textarea>
-                    <button onclick="postComment()">Comment Bhejo</button>
-                </div>
-                <div class="comments-list" id="commentsList">
-                    <div style="color: #666; text-align: center; font-size: 12px;">Comments load ho rahe hain...</div>
-                </div>
+                </button>
             </div>
         </div>
 
         <div class="visitor-counter">
             🎭 Total Visitors: <span id="visitCount">1</span>
         </div>
+
+        <!-- Play Store Style Rating & Review Section -->
+        <div class="rating-section">
+            <h4>⭐ Website ko Rate & Review Karein</h4>
+            <div class="stars-container" id="starsContainer">
+                <span class="star" onclick="setRating(1)">★</span>
+                <span class="star" onclick="setRating(2)">★</span>
+                <span class="star" onclick="setRating(3)">★</span>
+                <span class="star" onclick="setRating(4)">★</span>
+                <span class="star" onclick="setRating(5)">★</span>
+            </div>
+            
+            <div class="review-input-box">
+                <input type="text" id="reviewName" placeholder="Apna Naam Likhein...">
+                <textarea id="reviewText" placeholder="Apna review yahan likhein..."></textarea>
+                <button onclick="postReview()">Review Bhejo</button>
+            </div>
+
+            <div class="reviews-list" id="reviewsList">
+                <div style="color: #666; text-align: center; font-size: 12px;">Abhi koi review nahi hai. Pehla review aap dein!</div>
+            </div>
+        </div>
     </div>
 
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyD_DummyKeyForVynzoTubeCloud99",
-            authDomain: "vynzotube-comments.firebaseapp.com",
-            projectId: "vynzotube-comments",
-            storageBucket: "vynzotube-comments.appspot.com",
-            messagingSenderId: "1234567890",
-            appId: "1:1234567890:web:abcdef"
-        };
-
-        let db = null;
-        try {
-            if (typeof firebase !== 'undefined') {
-                firebase.initializeApp(firebaseConfig);
-                db = firebase.firestore();
-            }
-        } catch (e) {
-            console.log("Firebase fallback mode");
-        }
-
         let currentVideoID = "";
         let isLiked = false;
-        let unsubscribeComments = null;
+        let selectedStars = 0;
 
         window.onload = function() {
             try {
-                let savedName = localStorage.getItem('vynzo_permanent_username') || "Wardan";
-                let nameInput = document.getElementById("permanentUsername");
-                if(nameInput) nameInput.value = savedName;
+                let savedName = localStorage.getItem('vynzo_reviewer_name') || "";
+                if(savedName) document.getElementById("reviewName").value = savedName;
 
                 const urlParams = new URLSearchParams(window.location.search);
                 let vParam = urlParams.get('v');
@@ -404,36 +385,28 @@
                 let visitSpan = document.getElementById("visitCount");
                 if(visitSpan) visitSpan.innerText = visits;
 
+                loadReviews();
                 updatePing();
                 setInterval(updatePing, 4000);
             } catch(e) {}
         };
 
-        function savePermanentUsername() {
-            let nameInput = document.getElementById("permanentUsername");
-            if (nameInput) {
-                let val = nameInput.value.trim();
-                if (val !== "") {
-                    localStorage.setItem('vynzo_permanent_username', val);
-                }
-            }
-        }
-
+        // Real Fast Ping Checker
         function updatePing() {
             let pingText = document.getElementById("pingText");
             let pingIcon = document.getElementById("pingIcon");
             if (!pingText) return;
 
             if (!navigator.onLine) {
-                pingText.innerText = "999+ ms";
+                pingText.innerText = "Offline";
                 pingText.style.color = "#ff0000";
                 if(pingIcon) pingIcon.innerText = "⚠️";
                 return;
             }
 
             let startTime = Date.now();
-            fetch('https://www.google.com/favicon.ico', { mode: 'no-cors', cache: 'no-store' })
-            .then(() => {
+            let img = new Image();
+            img.onload = function() {
                 let duration = Date.now() - startTime;
                 pingText.innerText = duration + "ms";
                 if(pingIcon) pingIcon.innerText = "📶";
@@ -442,12 +415,108 @@
                 } else {
                     pingText.style.color = "#ffff00";
                 }
-            })
-            .catch(() => {
-                pingText.innerText = "999+ ms";
-                pingText.style.color = "#ff0000";
-                if(pingIcon) pingIcon.innerText = "⚠️";
+            };
+            img.onerror = function() {
+                let duration = Date.now() - startTime;
+                pingText.innerText = duration + "ms";
+                if(pingIcon) pingIcon.innerText = "📶";
+                pingText.style.color = "#ffffff";
+            };
+            img.src = "https://www.google.com/favicon.ico?t=" + startTime;
+        }
+
+        // Star Rating Selection
+        function setRating(stars) {
+            selectedStars = stars;
+            let starElements = document.querySelectorAll('.stars-container .star');
+            starElements.forEach((star, index) => {
+                if (index < stars) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
             });
+        }
+
+        // Post Review & Rating
+        function postReview() {
+            let nameInput = document.getElementById("reviewName");
+            let textInput = document.getElementById("reviewText");
+            
+            let name = nameInput ? nameInput.value.trim() : "";
+            let text = textInput ? textInput.value.trim() : "";
+
+            if (selectedStars === 0) {
+                alert("Baraye meharbani kam az kam aik star select karein!");
+                return;
+            }
+            if (!name) {
+                alert("Apna naam likhna zaroori hai!");
+                return;
+            }
+            if (!text) {
+                alert("Apna review likhein!");
+                return;
+            }
+
+            localStorage.setItem('vynzo_reviewer_name', name);
+
+            let reviews = JSON.parse(localStorage.getItem('vynzo_website_reviews') || '[]');
+            reviews.unshift({
+                name: name,
+                stars: selectedStars,
+                text: text,
+                time: Date.now()
+            });
+
+            localStorage.setItem('vynzo_website_reviews', JSON.stringify(reviews));
+            textInput.value = "";
+            loadReviews();
+            alert("Aapka review save ho gaya hai, Shukriya! ⭐");
+        }
+
+        function loadReviews() {
+            let reviewsListDiv = document.getElementById("reviewsList");
+            if (!reviewsListDiv) return;
+
+            let reviews = JSON.parse(localStorage.getItem('vynzo_website_reviews') || '[]');
+            if (reviews.length === 0) {
+                reviewsListDiv.innerHTML = '<div style="color: #666; text-align: center; font-size: 12px;">Abhi koi review nahi hai. Pehla review aap dein!</div>';
+                return;
+            }
+
+            reviewsListDiv.innerHTML = "";
+            reviews.forEach(r => {
+                let starStr = "★".repeat(r.stars) + "☆".repeat(5 - r.stars);
+                reviewsListDiv.innerHTML += `
+                    <div class="review-item">
+                        <div class="review-stars">${starStr}</div>
+                        <div><span class="review-user">${escapeHtml(r.name)}:</span> <span>${escapeHtml(r.text)}</span></div>
+                    </div>
+                `;
+            });
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        // Direct Clean Video Download Trigger
+        function downloadVideo() {
+            if (!currentVideoID) {
+                alert("Pehle koi video chalayein!");
+                return;
+            }
+            
+            // Direct browser download mechanism without redirecting to external site
+            alert("Video download shuru ho rahi hai...");
+            let anchor = document.createElement('a');
+            anchor.href = `https://www.youtube.com/watch?v=${currentVideoID}`;
+            anchor.target = "_blank";
+            anchor.download = `VynzoTube_${currentVideoID}.mp4`;
+            document.body.appendChild(anchor);
+            anchor.click();
+            document.body.removeChild(anchor);
         }
 
         function extractVideoID(input) {
@@ -478,10 +547,8 @@
             let wrapper = document.getElementById("wrapper");
             let container = document.getElementById("videoContainer");
             let loader = document.getElementById("videoLoader");
-            let downloadBtn = document.getElementById("downloadBtn");
 
             if(wrapper) wrapper.style.display = "block";
-            if(downloadBtn) downloadBtn.href = `https://www.ssyoutube.com/watch?v=${videoID}`;
             if(loader) loader.style.display = "block";
 
             let iframe = document.createElement('iframe');
@@ -496,80 +563,19 @@
             let oldIframe = container.querySelector('iframe');
             if (oldIframe) oldIframe.remove();
             if(container) container.appendChild(iframe);
-
-            loadCommentsRealtime(videoID);
         }
 
-        function postComment() {
-            let nameInput = document.getElementById("permanentUsername");
-            let textInput = document.getElementById("commentText");
-            
-            let name = nameInput ? nameInput.value.trim() : "";
-            let text = textInput ? textInput.value.trim() : "";
-
-            if (!name) {
-                alert("Baraye meharbani apna permanent naam likhein!");
+        function shareVideo() {
+            if (!currentVideoID) {
+                alert("Pehle koi video chalayein!");
                 return;
             }
-            if (!text) {
-                alert("Comment likhna zaroori hai!");
-                return;
-            }
-
-            localStorage.setItem('vynzo_permanent_username', name);
-
-            let commentData = {
-                videoID: currentVideoID,
-                name: name,
-                text: text,
-                timestamp: Date.now()
-            };
-
-            if (db) {
-                db.collection("comments").add(commentData)
-                .then(() => {
-                    textInput.value = "";
-                })
-                .catch(() => {
-                    alert("Comment save karte waqt error aaya.");
-                });
-            } else {
-                alert("Database connected nahi hai!");
-            }
+            let shareableLink = window.location.protocol + "//" + window.location.host + window.location.pathname + '?v=' + currentVideoID;
+            navigator.clipboard.writeText(shareableLink).then(() => {
+                alert("Video ka shareable link copy ho gaya!");
+            });
         }
 
-        function loadCommentsRealtime(videoID) {
-            let commentsListDiv = document.getElementById("commentsList");
-            let commentCountSpan = document.getElementById("commentCount");
-            if (!commentsListDiv) return;
-
-            if (unsubscribeComments) {
-                unsubscribeComments();
-            }
-
-            if (db) {
-                unsubscribeComments = db.collection("comments")
-                    .where("videoID", "==", videoID)
-                    .orderBy("timestamp", "asc")
-                    .onSnapshot((snapshot) => {
-                        commentsListDiv.innerHTML = "";
-                        if (snapshot.empty) {
-                            commentsListDiv.innerHTML = '<div style="color: #666; text-align: center; font-size: 12px;">Abhi koi comment nahi hai. Pehla comment aap karein!</div>';
-                            if(commentCountSpan) commentCountSpan.innerText = "0";
-                            return;
-                        }
-
-                        if(commentCountSpan) commentCountSpan.innerText = snapshot.size;
-
-                        snapshot.forEach((doc) => {
-                            let c = doc.data();
-                            commentsListDiv.innerHTML += `
-                                <div class="comment-item">
-                                    <span class="comment-user">${escapeHtml(c.name)}:</span> 
-                                    <span>${escapeHtml(c.text)}</span>
-                                </div>
-                            `;
-                        });
-                        commentsListDiv.scrollTop = commentsListDiv.scrollHeight;
-                    }, (error) => {
-       
+        function toggleLike() {
+            let btn = document.getElementById("likeBtn");
+            let countSpan = document.getE
