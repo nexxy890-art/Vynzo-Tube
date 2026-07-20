@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vynzo-Tube</title>
 
+    <!-- Firebase SDKs for Real-time Cloud Database -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
     <style>
         @keyframes neonRainbow {
             0% { border-color: #ff0000; box-shadow: 0 0 15px #ff0000; }
@@ -23,7 +27,7 @@
 
         body {
             margin: 0;
-            padding: 40px 20px 40px 20px;
+            padding: 40px 20px 60px 20px;
             min-height: 100vh;
             font-family: Arial, sans-serif;
             text-align: center;
@@ -37,12 +41,12 @@
             box-sizing: border-box;
         }
 
-        /* Ping Indicator Top-Right */
+        /* Ping Indicator Top-Right (Free Fire Style Numbers) */
         .ping-indicator {
             position: absolute;
             top: 15px;
             right: 20px;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.75);
             border: 1px solid #444;
             padding: 6px 12px;
             border-radius: 20px;
@@ -183,8 +187,96 @@
             box-shadow: 0 0 10px #ff0000;
         }
 
+        /* Permanent User & Comment Section Box */
+        .comments-section {
+            width: 100%;
+            margin-top: 25px;
+            background: rgba(18, 18, 18, 0.95);
+            animation: neonRainbow 6s infinite;
+            border: 2px solid #00f0ff;
+            border-radius: 16px;
+            padding: 15px;
+            box-sizing: border-box;
+            text-align: left;
+        }
+        .comments-section h3 {
+            margin-top: 0;
+            font-size: 16px;
+            color: #00f0ff;
+            border-bottom: 1px solid #333;
+            padding-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .user-tag-box {
+            background: #121212;
+            border: 1px solid #444;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .user-tag-box input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #00f0ff;
+            font-weight: bold;
+            font-size: 13px;
+            outline: none;
+        }
+        .comment-input-box {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .comment-input-box textarea {
+            padding: 10px 12px;
+            background: #121212;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            font-family: Arial, sans-serif;
+            resize: none;
+            height: 50px;
+        }
+        .comment-input-box button {
+            background: #00f0ff;
+            color: #000;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .comments-list {
+            max-height: 200px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .comment-item {
+            background: #111;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border-left: 3px solid #ff0000;
+            font-size: 13px;
+        }
+        .comment-user {
+            color: #00f0ff;
+            font-weight: bold;
+            margin-right: 6px;
+        }
+
         .visitor-counter {
-            margin-top: 35px;
+            margin-top: 30px;
             display: inline-flex;
             align-items: center;
             gap: 10px;
@@ -207,7 +299,7 @@
     <!-- Ping Indicator Top-Right -->
     <div class="ping-indicator" id="pingIndicator">
         <span id="pingIcon">📶</span>
-        <span id="pingText" style="color: #00f0ff;">Online</span>
+        <span id="pingText" style="color: #ffffff;">45ms</span>
     </div>
 
     <div class="main-container">
@@ -235,6 +327,28 @@
                     📥 Download
                 </a>
             </div>
+
+            <!-- Permanent Username & Comment Section -->
+            <div class="comments-section">
+                <h3>
+                    <span>💬 Comments (<span id="commentCount">0</span>)</span>
+                    <span style="font-size: 11px; color: #aaa; font-weight: normal;">Live Cloud Sync</span>
+                </h3>
+
+                <!-- Permanent Username Bar -->
+                <div class="user-tag-box">
+                    <span style="font-size: 12px; color: #888;">👤 Naam:</span>
+                    <input type="text" id="permanentUsername" placeholder="Apna permanent naam likhein..." oninput="savePermanentUsername()">
+                </div>
+
+                <div class="comment-input-box">
+                    <textarea id="commentText" placeholder="Apna comment likhein..."></textarea>
+                    <button onclick="postComment()">Comment Bhejo</button>
+                </div>
+                <div class="comments-list" id="commentsList">
+                    <div style="color: #666; text-align: center; font-size: 12px;">Comments load ho rahe hain...</div>
+                </div>
+            </div>
         </div>
 
         <div class="visitor-counter">
@@ -243,12 +357,35 @@
     </div>
 
     <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_DummyKeyForVynzoTubeCloud99",
+            authDomain: "vynzotube-comments.firebaseapp.com",
+            projectId: "vynzotube-comments",
+            storageBucket: "vynzotube-comments.appspot.com",
+            messagingSenderId: "1234567890",
+            appId: "1:1234567890:web:abcdef"
+        };
+
+        let db = null;
+        try {
+            if (typeof firebase !== 'undefined') {
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.firestore();
+            }
+        } catch (e) {
+            console.log("Firebase fallback mode");
+        }
+
         let currentVideoID = "";
         let isLiked = false;
+        let unsubscribeComments = null;
 
         window.onload = function() {
             try {
-                // Automatic URL Video Loader Check
+                let savedName = localStorage.getItem('vynzo_permanent_username') || "Wardan";
+                let nameInput = document.getElementById("permanentUsername");
+                if(nameInput) nameInput.value = savedName;
+
                 const urlParams = new URLSearchParams(window.location.search);
                 let vParam = urlParams.get('v');
                 if (vParam) {
@@ -257,44 +394,59 @@
                     if(vInput) vInput.value = "https://youtu.be/" + vParam;
                 }
 
-                // Visitor Counter
-                let visits = parseInt(localStorage.getItem('vynzo_visit_count') || '1');
-                if (!sessionStorage.getItem('vynzo_counted')) {
+                let visitKey = 'vynzo_visit_counted_session';
+                let visits = parseInt(localStorage.getItem('vynzo_visit_total') || '124');
+                if (!sessionStorage.getItem(visitKey)) {
                     visits += 1;
-                    localStorage.setItem('vynzo_visit_count', visits);
-                    sessionStorage.setItem('vynzo_counted', 'true');
+                    localStorage.setItem('vynzo_visit_total', visits);
+                    sessionStorage.setItem(visitKey, 'true');
                 }
                 let visitSpan = document.getElementById("visitCount");
                 if(visitSpan) visitSpan.innerText = visits;
 
-                // Real Ping Checker
-                checkRealPing();
-                setInterval(checkRealPing, 5000);
+                updatePing();
+                setInterval(updatePing, 4000);
             } catch(e) {}
         };
 
-        function checkRealPing() {
+        function savePermanentUsername() {
+            let nameInput = document.getElementById("permanentUsername");
+            if (nameInput) {
+                let val = nameInput.value.trim();
+                if (val !== "") {
+                    localStorage.setItem('vynzo_permanent_username', val);
+                }
+            }
+        }
+
+        function updatePing() {
             let pingText = document.getElementById("pingText");
             let pingIcon = document.getElementById("pingIcon");
             if (!pingText) return;
+
+            if (!navigator.onLine) {
+                pingText.innerText = "999+ ms";
+                pingText.style.color = "#ff0000";
+                if(pingIcon) pingIcon.innerText = "⚠️";
+                return;
+            }
 
             let startTime = Date.now();
             fetch('https://www.google.com/favicon.ico', { mode: 'no-cors', cache: 'no-store' })
             .then(() => {
                 let duration = Date.now() - startTime;
-                pingText.innerText = duration < 300 ? "Online (Fast)" : "Online (" + duration + "ms)";
-                pingText.style.color = "#00f0ff";
+                pingText.innerText = duration + "ms";
                 if(pingIcon) pingIcon.innerText = "📶";
+                if (duration < 250) {
+                    pingText.style.color = "#ffffff";
+                } else {
+                    pingText.style.color = "#ffff00";
+                }
             })
             .catch(() => {
-                if (navigator.onLine) {
-                    pingText.innerText = "Online";
-                    pingText.style.color = "#33cc33";
-                } else {
-                    pingText.innerText = "Offline";
-                    pingText.style.color = "#ff0000";
-                    if(pingIcon) pingIcon.innerText = "⚠️";
-                }
+                pingText.innerText = "999+ ms";
+                pingText.style.color = "#ff0000";
+                if(pingIcon) pingIcon.innerText = "⚠️";
             });
         }
 
@@ -333,7 +485,7 @@
             if(loader) loader.style.display = "block";
 
             let iframe = document.createElement('iframe');
-            iframe.src = `https://www.youtube.com/embed/${videoID}?autoplay=1&rel=0&modestbranding=1`;
+            iframe.src = `https://www.youtube.com/embed/${videoID}?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3&controls=1`;
             iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
             iframe.allowFullscreen = true;
 
@@ -344,35 +496,80 @@
             let oldIframe = container.querySelector('iframe');
             if (oldIframe) oldIframe.remove();
             if(container) container.appendChild(iframe);
+
+            loadCommentsRealtime(videoID);
         }
 
-        function shareVideo() {
-            if (!currentVideoID) {
-                alert("Pehle koi video chalayein!");
+        function postComment() {
+            let nameInput = document.getElementById("permanentUsername");
+            let textInput = document.getElementById("commentText");
+            
+            let name = nameInput ? nameInput.value.trim() : "";
+            let text = textInput ? textInput.value.trim() : "";
+
+            if (!name) {
+                alert("Baraye meharbani apna permanent naam likhein!");
                 return;
             }
-            let shareableLink = window.location.protocol + "//" + window.location.host + window.location.pathname + '?v=' + currentVideoID;
-            navigator.clipboard.writeText(shareableLink).then(() => {
-                alert("Video ka shareable link copy ho gaya!");
-            });
-        }
+            if (!text) {
+                alert("Comment likhna zaroori hai!");
+                return;
+            }
 
-        function toggleLike() {
-            let btn = document.getElementById("likeBtn");
-            let countSpan = document.getElementById("likeCount");
-            if(!countSpan) return;
-            let count = parseInt(countSpan.innerText);
-            if (!isLiked) {
-                isLiked = true;
-                if(btn) btn.classList.add("liked");
-                countSpan.innerText = count + 1;
+            localStorage.setItem('vynzo_permanent_username', name);
+
+            let commentData = {
+                videoID: currentVideoID,
+                name: name,
+                text: text,
+                timestamp: Date.now()
+            };
+
+            if (db) {
+                db.collection("comments").add(commentData)
+                .then(() => {
+                    textInput.value = "";
+                })
+                .catch(() => {
+                    alert("Comment save karte waqt error aaya.");
+                });
             } else {
-                isLiked = false;
-                if(btn) btn.classList.remove("liked");
-                countSpan.innerText = count - 1;
+                alert("Database connected nahi hai!");
             }
         }
-    </script>
-</body>
-    </html>
-    
+
+        function loadCommentsRealtime(videoID) {
+            let commentsListDiv = document.getElementById("commentsList");
+            let commentCountSpan = document.getElementById("commentCount");
+            if (!commentsListDiv) return;
+
+            if (unsubscribeComments) {
+                unsubscribeComments();
+            }
+
+            if (db) {
+                unsubscribeComments = db.collection("comments")
+                    .where("videoID", "==", videoID)
+                    .orderBy("timestamp", "asc")
+                    .onSnapshot((snapshot) => {
+                        commentsListDiv.innerHTML = "";
+                        if (snapshot.empty) {
+                            commentsListDiv.innerHTML = '<div style="color: #666; text-align: center; font-size: 12px;">Abhi koi comment nahi hai. Pehla comment aap karein!</div>';
+                            if(commentCountSpan) commentCountSpan.innerText = "0";
+                            return;
+                        }
+
+                        if(commentCountSpan) commentCountSpan.innerText = snapshot.size;
+
+                        snapshot.forEach((doc) => {
+                            let c = doc.data();
+                            commentsListDiv.innerHTML += `
+                                <div class="comment-item">
+                                    <span class="comment-user">${escapeHtml(c.name)}:</span> 
+                                    <span>${escapeHtml(c.text)}</span>
+                                </div>
+                            `;
+                        });
+                        commentsListDiv.scrollTop = commentsListDiv.scrollHeight;
+                    }, (error) => {
+       
