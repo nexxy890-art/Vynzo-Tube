@@ -482,9 +482,9 @@
     <div id="usernameModal">
         <div class="modal-box">
             <h3 style="color: #ff0000; margin-top:0;">Vynzo-Tube Setup</h3>
-            <p style="font-size: 12px; color: #ccc;">Website shuru karne ke liye apna Unique Username darj karein. (Must include letters & numbers, no stylish fonts!)</p>
+            <p style="font-size: 12px; color: #ccc;">Website shuru karne ke liye apna Unique Username darj karein.</p>
             <input type="text" id="modalUsernameInput" placeholder="e.g. Wardan99">
-            <div class="error-msg" id="usernameError">Ghalat format! Username mein letters aur numbers dono hone lazmi hain aur koi stylish font nahi chalega.</div>
+            <div class="error-msg" id="usernameError">Baraye meharbani apna username likhein!</div>
             <button onclick="saveInitialUsername()" style="margin-top: 15px; width: 100%; background: #ff0000; color:#fff; border:none; padding:12px; border-radius:10px; font-weight:bold; cursor:pointer;">Save & Start</button>
         </div>
     </div>
@@ -540,7 +540,7 @@
                     🔗 Share / Copy Link
                 </button>
                 <a id="downloadBtn" href="#" target="_blank" class="btn-custom">
-                    ⬇️ Download
+                    📥 Download
                 </a>
             </div>
         </div>
@@ -596,4 +596,6 @@
         </div>
     </div>
 
-    <!-- Bottom Navigation Bar (Home & Notifications at the very botto
+    <!-- Bottom Navigation Bar (Home & Notifications at the very bottom) -->
+    <div class="bottom-nav-bar">
+        <button class="bottom-nav-btn active" onclick="switchPage('homePage')
